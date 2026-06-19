@@ -1,0 +1,1554 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Japanese Kanji Learning System (Premium)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700&family=Noto+Sans+JP:wght@500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #09090e;
+  --surface: #12111f;
+  --surface2: #1a182e;
+  --border: rgba(255,255,255,0.06);
+  --text: #fffffe;
+  --muted: #a7a9be;
+  --hint: #63657a;
+  --primary: #a78bfa; 
+  --success: #43d9ad;
+  --warning: #ff8906;
+  --danger: #f43f5e;
+  --glow: rgba(167, 139, 250, 0.15);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Noto Sans Bengali', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding: 20px 16px 80px; }
+body::before { content: ''; position: fixed; inset: 0; background: radial-gradient(ellipse 60% 40% at 50% 0%, var(--glow) 0%, transparent 70%); pointer-events: none; z-index: 0; }
+.container { position: relative; z-index: 1; max-width: 800px; margin: 0 auto; }
+
+/* HEADER & NAV */
+header { text-align: center; margin-bottom: 25px; }
+header h1 { font-size: 26px; font-weight: 700; margin-bottom: 4px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+header p { font-size: 12px; color: var(--muted); font-family: 'Space Mono', monospace; }
+.nav-tabs { display: flex; gap: 10px; margin-bottom: 25px; justify-content: center; }
+.nav-tab { padding: 10px 20px; border-radius: 100px; background: var(--surface); color: var(--muted); text-decoration: none; font-weight: 600; font-size: 14px; border: 1px solid var(--border); transition: all 0.2s; }
+.nav-tab.active { background: var(--primary); color: #09090e; font-weight: 700; box-shadow: 0 4px 12px var(--glow); border-color: transparent; }
+
+/* STATS */
+.stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 25px; }
+.stat-card { background: var(--surface); border: 1px solid var(--border); padding: 12px; border-radius: 14px; text-align: center; }
+.stat-card .val { font-family: 'Space Mono', monospace; font-size: 20px; font-weight: 700; color: var(--primary); }
+.stat-card .lbl { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+/* SEARCH & FILTERS */
+.search-wrapper { position: relative; margin-bottom: 20px; }
+.search-input { width: 100%; padding: 14px 16px 14px 44px; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; color: var(--text); font-size: 14px; transition: all 0.3s; }
+.search-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 15px var(--glow); }
+.search-icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--hint); }
+
+.filter-section { background: var(--surface); border: 1px solid var(--border); padding: 14px; border-radius: 16px; margin-bottom: 25px; display: flex; flex-direction: column; gap: 12px; }
+.filter-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.filter-lbl { font-size: 11px; font-weight: bold; color: var(--hint); text-transform: uppercase; width: 80px; }
+.chip { padding: 5px 12px; border-radius: 100px; background: var(--surface2); border: 1px solid var(--border); color: var(--muted); font-size: 11px; cursor: pointer; font-family: inherit; transition: all 0.2s; }
+.chip.active { background: var(--primary); color: #09090e; font-weight: bold; border-color: transparent; }
+
+/* MODE CONTROLLER */
+.mode-switch { display: flex; background: var(--surface); border: 1px solid var(--border); padding: 4px; border-radius: 12px; margin-bottom: 25px; }
+.mode-btn { flex: 1; padding: 10px; border: none; background: transparent; color: var(--muted); font-size: 13px; font-weight: 600; cursor: pointer; border-radius: 8px; transition: all 0.2s; font-family: inherit; }
+.mode-btn.active { background: var(--surface2); color: var(--primary); box-shadow: inset 0 1px 2px rgba(255,255,255,0.05); }
+
+/* KANJI FLASHCARD (Modern Premium Flip UI) */
+.flashcard-view { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+.flip-container { perspective: 1000px; width: 100%; max-width: 380px; height: 420px; cursor: pointer; }
+.card-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; }
+.flip-container.flipped .card-inner { transform: rotateY(180deg); }
+
+.card-front, .card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 24px; border: 1px solid var(--border); padding: 24px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
+.card-front { background: linear-gradient(145deg, var(--surface), #151426); }
+.card-back { background: linear-gradient(145deg, #151426, var(--surface)); transform: rotateY(180deg); text-align: left; overflow-y: auto; }
+
+.badge-row { display: flex; justify-content: space-between; font-family: 'Space Mono', monospace; font-size: 11px; color: var(--muted); }
+.kanji-big { font-family: 'Noto Sans JP', sans-serif; font-size: 96px; font-weight: 700; color: var(--text); margin: 20px 0; text-shadow: 0 0 20px var(--glow); }
+.reveal-hint { font-size: 12px; color: var(--hint); display: flex; align-items: center; justify-content: center; gap: 5px; }
+
+.audio-btn { background: rgba(167, 139, 250, 0.1); border: 1px solid rgba(167, 139, 250, 0.2); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--primary); cursor: pointer; transition: all 0.2s; font-size: 14px; }
+.audio-btn:hover { background: var(--primary); color: #09090e; }
+
+/* PROGRESS ACTIONS */
+.action-row { display: flex; gap: 10px; width: 100%; max-width: 380px; }
+.action-btn { flex: 1; padding: 12px; border: none; border-radius: 12px; font-family: inherit; font-size: 12px; font-weight: bold; cursor: pointer; transition: all 0.2s; text-align: center; color: #fff; }
+.btn-review { background: #3b3a54; border: 1px solid rgba(255,255,255,0.05); }
+.btn-known { background: #047857; }
+.btn-master { background: linear-gradient(135deg, #7c3aed, #4c1d95); }
+
+/* LIST VIEW */
+.list-view { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 12px; width: 100%; }
+.mini-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 16px; text-align: center; transition: all 0.2s; cursor: pointer; position: relative; }
+.mini-card:hover { border-color: var(--primary); transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
+.mini-card .k-char { font-family: 'Noto Sans JP', sans-serif; font-size: 36px; font-weight: bold; margin-bottom: 6px; }
+.mini-card .k-mean { font-size: 13px; font-weight: 600; color: var(--success); }
+.mini-card .k-less { font-family: 'Space Mono', monospace; font-size: 10px; color: var(--hint); margin-top: 4px; }
+.status-dot { position: absolute; top: 10px; right: 10px; width: 6px; height: 6px; border-radius: 50%; }
+
+/* QUIZ VIEW */
+.quiz-view { max-width: 500px; margin: 0 auto; background: var(--surface); border: 1px solid var(--border); padding: 24px; border-radius: 24px; }
+.quiz-header { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-bottom: 15px; font-family: 'Space Mono', monospace; }
+.q-box { font-size: 22px; font-weight: 700; text-align: center; margin: 20px 0; color: var(--text); }
+.q-box .large-q { font-family: 'Noto Sans JP', sans-serif; font-size: 64px; display: block; margin-bottom: 10px; }
+.options-grid { display: flex; flex-direction: column; gap: 10px; }
+.opt-btn { background: var(--surface2); border: 1px solid var(--border); padding: 14px; border-radius: 12px; color: var(--text); text-align: left; font-size: 14px; font-family: inherit; cursor: pointer; transition: all 0.2s; }
+.opt-btn:hover { border-color: var(--primary); background: rgba(167,139,250,0.05); }
+.opt-btn.correct { background: #065f46; border-color: var(--success); color: #fff; }
+.opt-btn.wrong { background: #991b1b; border-color: var(--danger); color: #fff; }
+.explanation-box { background: rgba(255,137,6,0.08); border-left: 4px solid var(--warning); padding: 12px; border-radius: 0 12px 12px 0; margin-top: 15px; font-size: 12px; line-height: 1.5; color: var(--muted); }
+
+/* MODAL OVERLAY */
+.modal { position: fixed; inset: 0; background: rgba(5,5,10,0.85); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; padding: 16px; }
+.modal.show { opacity: 1; pointer-events: auto; }
+.modal-content { background: var(--surface); border: 1px solid var(--border); border-radius: 24px; padding: 24px; max-width: 550px; width: 100%; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+.modal-grid { display: grid; grid-template-columns: 100px 1fr; gap: 20px; border-bottom: 1px solid var(--border); padding-bottom: 16px; margin-bottom: 16px; }
+.m-kanji-wrap { text-align: center; }
+.m-kanji { font-family: 'Noto Sans JP', sans-serif; font-size: 64px; font-weight: 700; background: var(--surface2); border-radius: 16px; height: 100px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border); }
+.sec-title { font-size: 12px; font-weight: bold; color: var(--primary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; margin-top: 14px; }
+.comp-chip { display: inline-block; background: rgba(255,255,255,0.04); border: 1px solid var(--border); padding: 4px 8px; border-radius: 6px; font-size: 12px; margin-right: 6px; margin-bottom: 6px; }
+.ex-item, .sent-item { background: rgba(0,0,0,0.15); padding: 10px; border-radius: 10px; margin-bottom: 8px; font-size: 13px; line-height: 1.5; }
+.jp-txt { font-family: 'Noto Sans JP', sans-serif; font-weight: 500; color: #fff; }
+.m-close { display: block; width: 100%; padding: 12px; background: var(--surface2); border: 1px solid var(--border); color: var(--text); border-radius: 12px; cursor: pointer; font-weight: bold; font-family: inherit; margin-top: 20px; }
+.m-close:hover { background: var(--danger); color: #fff; border-color: transparent; }
+
+.hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <h1>🈶 Japanese Kanji Learning System</h1>
+    <p>Kanji • Onyomi • Kunyomi • Meaning • Examples</p>
+  </header>
+
+  <!-- NAVIGATION TABS -->
+  <div class="nav-tabs">
+    <a href="index.html" class="nav-tab">📖 Vocabulary</a>
+    <a href="kanji.html" class="nav-tab active">🈶 Kanji</a>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="stat-card"><div class="val" id="stTotal">0</div><div class="lbl">Total</div></div>
+    <div class="stat-card"><div class="val" id="stKnown" style="color: #3da9fc;">0</div><div class="lbl">Known</div></div>
+    <div class="stat-card"><div class="val" id="stReview" style="color: var(--warning);">0</div><div class="lbl">Review</div></div>
+    <div class="stat-card"><div class="val" id="stMaster" style="color: var(--success);">0</div><div class="lbl">Mastered</div></div>
+  </div>
+
+  <!-- SEARCH BOX -->
+  <div class="search-wrapper">
+    <span class="search-icon">🔍</span>
+    <input type="text" class="search-input" id="searchBar" placeholder="Kanji, Meaning, Onyomi, Kunyomi, Romaji..." oninput="debouncedSearch()">
+  </div>
+
+  <!-- FILTERS SECTION -->
+  <div class="filter-section">
+    <div class="filter-row">
+      <span class="filter-lbl">JLPT Level</span>
+      <button class="chip active" onclick="filterJLPT('all', this)">All</button>
+      <button class="chip" onclick="filterJLPT('N5', this)">N5</button>
+      <button class="chip" onclick="filterJLPT('N4', this)">N4</button>
+      <button class="chip" onclick="filterJLPT('N3', this)">N3</button>
+    </div>
+    <div class="filter-row">
+      <span class="filter-lbl">Lessons</span>
+      <div id="lessonChipsContainer" style="display:flex; gap:6px; flex-wrap:wrap;">
+        <button class="chip active" onclick="filterLesson('all', this)">All Lessons</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODE SWITCHER -->
+  <div class="mode-switch">
+    <button class="mode-btn active" onclick="switchMode('flashcard')">🎴 Flashcard</button>
+    <button class="mode-btn" onclick="switchMode('list')">📋 List View</button>
+    <button class="mode-btn" onclick="switchMode('quiz')">📝 Quiz Mode</button>
+  </div>
+
+  <!-- MAIN VIEWS CONTAINER -->
+  <main id="viewContainer">
+    
+    <!-- FLASHCARD MODE -->
+    <div id="flashcardMode" class="flashcard-view">
+      <div class="flip-container" id="flipper" onclick="toggleFlip()">
+        <div class="card-inner">
+          <!-- Front -->
+          <div class="card-front">
+            <div class="badge-row">
+              <span id="fcLesson">Lesson --</span>
+              <span id="fcStrokes">-- Strokes</span>
+            </div>
+            <div>
+              <div class="kanji-big" id="fcKanji">一</div>
+              <div class="reveal-hint">🔄 Tap to Reveal Back</div>
+            </div>
+            <div style="display:flex; justify-content:space-between; width:100%; align-items:center;">
+              <span id="fcLevel" style="background:rgba(255,255,255,0.05); padding:4px 8px; border-radius:6px; font-size:11px;">JLPT N5</span>
+              <button class="audio-btn" onclick="playAudio(event)">🔊</button>
+            </div>
+          </div>
+          <!-- Back -->
+          <div class="card-back">
+            <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+              <strong id="fcBackMeaning" style="color:var(--success); font-size:18px;">Meaning</strong>
+              <button class="audio-btn" id="fcBackAudio">🔊</button>
+            </div>
+            <div style="font-size:13px; line-height:1.6; color:var(--muted); margin-bottom:12px;">
+              <div><strong>Onyomi:</strong> <span id="fcBackOn" class="jp-txt"></span></div>
+              <div><strong>Kunyomi:</strong> <span id="fcBackKun" class="jp-txt"></span></div>
+              <div><strong>Radical:</strong> <span id="fcBackRadical"></span></div>
+            </div>
+            <div style="background:rgba(255,137,6,0.05); border-left:3px solid var(--warning); padding:8px; border-radius:4px; font-size:12px;">
+              <strong style="color:var(--warning); display:block; margin-bottom:2px;">💡 AI Memory Story:</strong>
+              <span id="fcBackStory"></span>
+            </div>
+            <div style="margin-top:12px; font-size:11px; color:var(--hint); text-align:center;">💡 Tap again to flip back or click Detail Modal below</div>
+          </div>
+        </div>
+      </div>
+      <!-- Progress Buttons -->
+      <div class="action-row">
+        <button class="action-btn btn-review" onclick="updateProgress('review')">Review Again</button>
+        <button class="action-btn btn-known" onclick="updateProgress('known')">Known</button>
+        <button class="action-btn btn-master" onclick="updateProgress('master')">Mastered</button>
+      </div>
+    </div>
+
+    <!-- LIST MODE -->
+    <div id="listMode" class="list-view hidden"></div>
+
+    <!-- QUIZ MODE -->
+    <div id="quizMode" class="quiz-view hidden">
+      <div class="quiz-header">
+        <div>Score: <span id="quizScore" style="color:var(--success); font-weight:bold;">0</span></div>
+        <div>Question: <span id="quizProgress">0/10</span></div>
+      </div>
+      <div class="q-box" id="questionBox">Question Loading...</div>
+      <div class="options-grid" id="optionsBox"></div>
+      <div class="explanation-box hidden" id="quizExplanation"></div>
+      <button class="m-close hidden" id="nextQuizBtn" onclick="generateQuizQuestion()" style="background:var(--primary); color:#09090e; margin-top:15px;">Next Question ➔</button>
+    </div>
+
+  </main>
+</div>
+
+<!-- COMPREHENSIVE DETAIL MODAL -->
+<div class="modal" id="detailModal" onclick="closeModal()">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <div class="modal-grid">
+      <div class="m-kanji-wrap">
+        <div class="m-kanji" id="mdKanji"></div>
+        <div style="font-size:11px; margin-top:6px; color:var(--hint);" id="mdStrokes"></div>
+      </div>
+      <div>
+        <h2 id="mdMeaning" style="color:var(--success); margin-bottom:4px;"></h2>
+        <p id="mdMeta" style="font-size:12px; color:var(--muted); font-family:'Space Mono';"></p>
+        <div style="margin-top:8px;">
+          <span class="comp-chip" id="mdRadical">Radical: </span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="sec-title">Readings</div>
+    <div style="background:var(--surface2); padding:10px; border-radius:10px; font-size:13px; line-height:1.6;">
+      <div><strong style="color:var(--hint)">Onyomi:</strong> <span id="mdOn" class="jp-txt"></span></div>
+      <div><strong style="color:var(--hint)">Kunyomi:</strong> <span id="mdKun" class="jp-txt"></span></div>
+    </div>
+
+    <div class="sec-title">🧠 AI Component & Memory Technique</div>
+    <div style="background:rgba(255,137,6,0.04); border-left:3px solid var(--warning); padding:12px; border-radius:6px; font-size:13px; line-height:1.5;">
+      <div style="margin-bottom:6px;"><strong>Components:</strong> <span id="mdComponents" style="color:#fff;"></span></div>
+      <div><strong>Story:</strong> <span id="mdStory" style="color:var(--muted);"></span></div>
+    </div>
+
+    <div class="sec-title">📚 Common Compound Words</div>
+    <div id="mdExamples"></div>
+
+    <div class="sec-title">💬 Context Sentence</div>
+    <div id="mdSentences"></div>
+
+    <button class="m-close" onclick="closeModal()">Close Details</button>
+  </div>
+</div>
+
+<script>
+/**
+ * ----------------------------------------------------
+ * KANJI KNOWLEDGE DATABASE (L3 to L18 Complete System)
+ * Includes Native Fallbacks for Missing Markdown Parsed Fields
+ * ----------------------------------------------------
+ */
+/**
+ * ----------------------------------------------------
+ * KANJI KNOWLEDGE DATABASE (ALL LESSONS COMPLETE LIST)
+ * Cleaned, Structured & Formatted with Premium AI Fallbacks
+ * ----------------------------------------------------
+ */
+const RAW_KANJI_DATABASE = [
+  // A1/A2 Elementary Core Lessons (Initial Phase)
+  {
+    kanji: '名', lesson: '3', meaning: 'নাম / খ্যাতি / বিখ্যাত', strokes: 6, jlpt: 'N5', radical: '口 (Mouth)',
+    on: 'メイ / ミョウ (mei / myō)', kun: 'な (na)', components: '夕 (সন্ধ্যা) + 口 (মুখ)',
+    story: 'সন্ধ্যায় অন্ধকারে কাউকে চিনতে না পেরে তার "নাম" ধরে ডাকার প্রাচীন দৃশ্য থেকে এই কাঞ্জি এসেছে।',
+    examples: [{word: '名前', furigana: 'なまえ', romaji: 'namae', meaning: 'নাম'}, {word: '有名', furigana: 'ゆうめい', romaji: 'yūmei', meaning: 'বিখ্যাত'}],
+    sentences: [{jp: 'お名前は何ですか？', furi: 'おなまえはなんですか？', rom: 'O-namae wa nan desu ka?', bn: 'আপনার নাম কি?'}]
+  },
+  {
+    kanji: '前', lesson: '3', meaning: 'সামনে / আগে', strokes: 9, jlpt: 'N5', radical: '刀 (Knife)',
+    on: 'ゼン (zen)', kun: 'まえ (mae)', components: 'ハ + 一 + 月 + リ (ছুরি)',
+    story: 'মাংস কাটার ছুরির সামনে সমস্ত উপাদান সাজিয়ে রাখার দৃশ্য।',
+    examples: [{word: '名前', furigana: 'なまえ', romaji: 'namae', meaning: 'নাম'}, {word: '午前', furigana: 'ごぜん', romaji: 'gozen', meaning: 'সকাল / AM'}],
+    sentences: [{jp: '駅の前にいます。', furi: 'えきのまえにいます。', rom: 'Eki no mae ni imasu.', bn: 'আমি স্টেশনের সামনে আছি।'}]
+  },
+  {
+    kanji: '国', lesson: '3', meaning: 'দেশ / রাষ্ট্র', strokes: 8, jlpt: 'N5', radical: '囗 (Enclosure)',
+    on: 'コク (koku)', kun: 'くに (kuni)', components: '囗 (সীমানা) + 玉 (রত্ন)',
+    story: 'চারদিকের সুরক্ষিত সীমানার ভেতরে রাজা তার মূল্যবান রত্ন বা সম্পদ রক্ষা করছেন—এটাই একটি দেশ।',
+    examples: [{word: '外国', furigana: 'がいこく', romaji: 'gaikoku', meaning: 'বিদেশ'}, {word: '中国', furigana: 'ちゅうごく', romaji: 'chūgoku', meaning: 'চীন'}],
+    sentences: [{jp: 'お国はどちらですか？', furi: 'おくにはどちらですか？', rom: 'O-kuni wa dochira desu ka?', bn: 'আপনার দেশ কোথায়?'}]
+  },
+  {
+    kanji: '私', lesson: '3', meaning: 'আমি / ব্যক্তিগত', strokes: 7, jlpt: 'N5', radical: '禾 (Grain)',
+    on: 'シ (shi)', kun: 'わたし / わたくし (watashi)', components: '禾 (শস্য) + 厶 (ব্যক্তিগত)',
+    story: 'নিজের চাষ করা শস্য নিজের প্রাইভেট বা ব্যক্তিগত ঝুড়িতে রাখার মাধ্যমে "আমি" বা "নিজস্ব" প্রকাশ পায়।',
+    examples: [{word: '私立大学', furigana: 'しりつだいがく', romaji: 'shiritsu daigaku', meaning: 'প্রাইভেট বিশ্ববিদ্যালয়'}],
+    sentences: [{jp: '私は学生です。', furi: 'わたしはがくせいになります。', rom: 'Watashi wa gakusei desu.', bn: 'আমি একজন ছাত্র।'}]
+  },
+  {
+    kanji: '父', lesson: '4', meaning: 'বাবা / পিতা', strokes: 4, jlpt: 'N5', radical: '父 (Father)',
+    on: 'フ (fu)', kun: 'ちち (chichi)', components: '父 (কুঠার)',
+    story: 'প্রাচীনকালে পরিবারের প্রধান বা বাবা দুই হাতে দুটি পাথরের কুঠার নিয়ে সবাইকে রক্ষা করতেন।',
+    examples: [{word: 'お父さん', furigana: 'おとうさん', romaji: 'otōsan', meaning: 'বাবা (অন্যের/সম্মানসূচক)'}, {word: '祖父', furigana: 'そふ', romaji: 'sofu', meaning: 'দাদা / নানা'}],
+    sentences: [{jp: '私の父は会社員です。', furi: 'わたしのちちはかいしゃいんです。', rom: 'Watashi no chichi wa kaishain desu.', bn: 'আমার বাবা একজন চাকুরিজীবী।'}]
+  },
+  {
+    kanji: '母', lesson: '4', meaning: 'মা / মাতা', strokes: 5, jlpt: 'N5', radical: '毋 (Mother)',
+    on: 'ボ (bo)', kun: 'はは (haha)', components: '女 (নারী) + ორი წერტიলি (বুকের দুধের ফোঁটা)',
+    story: 'একজন নারী তার সন্তানকে পরম যত্নে স্তন্যপান করাচ্ছেন, এটি মায়ের ভালোবাসার প্রতীক।',
+    examples: [{word: 'お母さん', furigana: 'おかあさん', romaji: 'okāsan', meaning: 'মা (সম্মানসূচক)'}, {word: '祖母', furigana: 'そぼ', romaji: 'sobo', meaning: 'দাদী / নানী'}],
+    sentences: [{jp: '母の料理は美味しいです。', furi: 'ははのりょうりはおいしいです。', rom: 'Haha no ryōri wa oishii desu.', bn: 'মায়ের রান্না অনেক সুস্বাদু।'}]
+  },
+  {
+    kanji: '子', lesson: '4', meaning: 'সন্তান / শিশু', strokes: 3, jlpt: 'N5', radical: '子 (Child)',
+    on: 'シ / ス (shi / su)', kun: 'こ (ko)', components: '子 (শিশু)',
+    story: 'একটি ছোট শিশু দুহাত দুপাশে ছড়িয়ে দোলনা বা বিছানায় শুয়ে খেলা করছে।',
+    examples: [{word: '子ども', furigana: 'こども', romaji: 'kodomo', meaning: 'শিশু / বাচ্চারা'}, {word: '男の子', furigana: 'おとこのこ', romaji: 'otoko no ko', meaning: 'ছেলে শিশু'}],
+    sentences: [{jp: 'あそこに子どもがいます。', furi: 'あそこにこどもがいます。', rom: 'Asoko ni kodomo ga imasu.', bn: 'ঐখানে একটি শিশু আছে।'}]
+  },
+  {
+    kanji: '本', lesson: '4', meaning: 'বই / মূল / উৎস / কাউন্টার', strokes: 5, jlpt: 'N5', radical: '木 (Tree)',
+    on: 'ホン (hon)', kun: 'もと (moto)', components: '木 (গাছ) + 一 (গোড়া)',
+    story: 'গাছের গোড়ায় বা মূলে দাগ দেওয়া হয়েছে, যা থেকে কাগজ বা "বই" এর মূল উৎস তৈরি হয়।',
+    examples: [{word: '日本', furigana: 'にほん', romaji: 'nihon', meaning: 'জাপান'}, {word: '日本語', furigana: 'にほんご', romaji: 'nihongo', meaning: 'জাপানি ভাষা'}],
+    sentences: [{jp: 'これは日本語の本です。', furi: 'これはにほんごのほんですか。', rom: 'Kore wa nihongo no hon desu.', bn: 'এটি একটি জাপানি ভাষার বই।'}]
+  },
+  {
+    kanji: '水', lesson: '5', meaning: 'পানি / জল', strokes: 4, jlpt: 'N5', radical: '水 (Water)',
+    on: 'スイ (sui)', kun: 'みず (mizu)', components: '水 (পানি)',
+    story: 'চারিদিকে স্প্ল্যাশ বা ছিটকে পড়া পানির ফোঁটা ও মূল জলধারার চিত্র থেকে এটি গঠিত।',
+    examples: [{word: '水道', furigana: 'すいどう', romaji: 'suidō', meaning: 'সাপ্লাই পানি'}, {word: '水曜日', furigana: 'すいようび', romaji: 'suiyōbi', meaning: 'বুধবার'}],
+    sentences: [{jp: 'お水をください。', furi: 'おみずをください。', rom: 'O-mizu o kudasai.', bn: 'অনুগ্রহ করে পানি দিন।'}]
+  },
+  {
+    kanji: '食', lesson: '5', meaning: 'খাবার / খাওয়া', strokes: 9, jlpt: 'N5', radical: '食 (Food)',
+    on: 'ショク (shoku)', kun: 'た.べる (ta.beru)', components: '𠊎 (ছাদ) + 良 (ভালো)',
+    story: 'একটি নিরাপদ ঘরের নিচে ভালো বা পুষ্টিকর জিনিস এনে আহার করা।',
+    examples: [{word: '食べます', furigana: 'たべます', romaji: 'tabemasu', meaning: 'খাওয়া'}, {word: '食堂', furigana: 'しょくどう', romaji: 'shokudō', meaning: 'ক্যান্টিন / রেস্টুরেন্ট'}],
+    sentences: [{jp: '朝ご飯を食べます。', furi: 'あさごはんをたべます。', rom: 'Asagohan o tabemasu.', bn: 'আমি সকালের নাস্তা খাই।'}]
+  },
+  {
+    kanji: '飲', lesson: '5', meaning: 'পান করা', strokes: 12, jlpt: 'N5', radical: '食 (Food)',
+    on: 'イン (in)', kun: 'の.む (no.mu)', components: '食 (খাবার) + 欠 (হাঁ করা মুখ)',
+    story: 'খাবারের সামনে গিয়ে তৃষ্ণার্ত অবস্থায় বড় করে মুখ হাঁ করে তরল ড্রিংক বা পান করা।',
+    examples: [{word: '飲みます', furigana: 'みます', romaji: 'nomimasu', meaning: 'পান করা'}, {word: '飲み物', furigana: 'のみもの', romaji: 'nomimono', meaning: 'পানীয়'}],
+    sentences: [{jp: 'お茶を飲みませんか？', furi: 'おちゃをのみませんか？', rom: 'O-cha o nomimasen ka?', bn: 'একসাথে চা পান করবেন কি?'}]
+  },
+  {
+    kanji: '魚', lesson: '6', meaning: 'মাছ', strokes: 11, jlpt: 'N5', radical: '魚 (Fish)',
+    on: 'ギョ (gyo)', kun: 'さかな (sakana)', components: 'ク (মাথা) + 田 (শরীর) + 灬 (লেজ/পাখনা)',
+    story: 'মাছের মাথা, আঁশযুক্ত বড় পেট এবং পানির নিচে থাকা পাখনার ছবির সমন্বয়ে কাঞ্জিটি গঠিত।',
+    examples: [{word: '魚市場', furigana: 'うおいちば', romaji: 'uoichiba', meaning: 'মাছের বাজার'}, {word: '人魚', furigana: 'にんぎょ', romaji: 'ningyo', meaning: 'মৎস্যকন্যা'}],
+    sentences: [{jp: '生の魚は食べられません。', furi: 'なまのさかなはたべられません。', rom: 'Nama no sakana wa taberaremasen.', bn: 'আমি কাঁচা মাছ খেতে পারি না।'}]
+  },
+  {
+    kanji: '肉', lesson: '6', meaning: 'মাংস', strokes: 6, jlpt: 'N5', radical: '肉 (Meat)',
+    on: 'ニク (niku)', kun: 'しし (shishi)', components: '内 (ভেতরে) + 人 (মানুষ)',
+    story: 'একটি কসাইখানায় ঝুলিয়ে রাখা চর্বিযুক্ত মাংসের টুকরোর ভেতরের টেক্সচার ডিজাইন।',
+    examples: [{word: '牛肉', furigana: 'ぎゅうにく', romaji: 'gyūniku', meaning: 'গরুর মাংস'}, {word: '豚肉', furigana: 'ぶたにく', romaji: 'butaniku', meaning: 'শূকরের মাংস'}],
+    sentences: [{jp: '肉料理が好きです。', furi: 'にくりょうりがすきです。', rom: 'Niku ryōri ga suki desu.', bn: 'আমি মাংসের পদ পছন্দ করি।'}]
+  },
+  {
+    kanji: '好', lesson: '6', meaning: 'পছন্দ / ভালোবাসা', strokes: 6, jlpt: 'N5', radical: '女 (Woman)',
+    on: 'コウ (kō)', kun: 'す.き (su.ki)', components: '女 (নারী) + 子 (শিশু)',
+    story: 'একজন মা বা নারী যখন তার কোলজুড়ে থাকা সন্তানকে আদর করেন, তখন পৃথিবীর সবচেয়ে সুন্দর "পছন্দ" বা স্নেহের প্রকাশ ঘটে।',
+    examples: [{word: '大好き', furigana: 'だいすき', romaji: 'daisuki', meaning: 'খুব পছন্দ করা'}, {word: '好物', furigana: 'こうぶつ', romaji: 'kōbutsu', meaning: 'প্রিয় খাবার'}],
+    sentences: [{jp: '日本語の勉強が好きです。', furi: 'にほんごのべんきょうがすきです。', rom: 'Nihongo no benkyō ga suki desu.', bn: 'আমি জাপানি ভাষা পড়তে পছন্দ করি।'}]
+  },
+  {
+    kanji: '家', lesson: '7', meaning: 'বাড়ি / ঘর / পরিবার', strokes: 10, jlpt: 'N5', radical: '宀 (Roof)',
+    on: 'カ / ケ (ka / ke)', kun: 'いえ / や (ie / ya)', components: '宀 (ছাদ) + 豕 (শূকর/গৃহপালিত পশু)',
+    story: 'প্রাচীনকালে একটি ছাদের নিচে গৃহপালিত পশু ও সম্পত্তি একসাথে রেখে মানুষ যেখানে বসবাস করত—সেটিই বাড়ি।',
+    examples: [{word: '家族', furigana: 'かぞく', romaji: 'kazoku', meaning: 'পরিবার'}, {word: '家賃', furigana: 'やちん', romaji: 'yachin', meaning: 'বাড়ি ভাড়া'}],
+    sentences: [{jp: '私の家は駅の近くにあります。', furi: 'わたしのいえはえきのちかくにあります。', rom: 'Watashi no ie wa eki no chikaku ni imasu.', bn: 'আমার বাড়ি স্টেশনের কাছে অবস্থিত।'}]
+  },
+  {
+    kanji: '新', lesson: '7', meaning: 'নতুন', strokes: 13, jlpt: 'N5', radical: '斤 (Axe)',
+    on: 'シン (shin)', kun: 'あたら.しい (atara.shii)', components: '立 (দাঁড়ানো) + 木 (গাছ) + 斤 (কুঠার)',
+    story: 'কুঠার দিয়ে বনের তাজা কাঠ কেটে এনে যখন নতুন বাড়ি বা জিনিস তৈরি করা হয়, তখন তা "নতুন" দেখায়।',
+    examples: [{word: '新しい', furigana: 'あたらしい', romaji: 'atarashii', meaning: 'নতুন'}, {word: '新幹線', furigana: 'しんかんせん', romaji: 'shinkansen', meaning: 'বুলেট ট্রেন'}],
+    sentences: [{jp: '新しいスマホを買いました。', furi: 'あたらしいすまほをかいました。', rom: 'Atarashii sumaho o kaimashita.', bn: 'আমি একটি নতুন স্মার্টফোন কিনেছি।'}]
+  },
+  {
+    kanji: '広', lesson: '7', meaning: 'প্রশস্ত / চওড়া / বড়', strokes: 5, jlpt: 'N5', radical: '广 (Dotted cliff/Building)',
+    on: 'コウ (kō)', kun: 'ひろ.い (hiro.i)', components: '广 (বড় ছাদ) + ム (ব্যক্তিগত)',
+    story: 'একটি বিশাল খিলানযুক্ত ছাদের নিচের উন্মুক্ত প্রশস্ত ফাঁকা বড় জায়গা।',
+    examples: [{word: '広い', furigana: 'ひろい', romaji: 'hiroi', meaning: 'প্রশস্ত'}, {word: '広場', furigana: 'ひろば', romaji: 'hiroba', meaning: 'খেলার মাঠ / স্কয়ার'}],
+    sentences: [{jp: 'この部屋はとても広いです。', furi: 'このへやはとてもひろいです。', rom: 'Kono heya wa totemo hiroi desu.', bn: 'এই রুমটি অনেক চলো ও বড়।'}]
+  },
+  {
+    kanji: '古', lesson: '7', meaning: 'পুরনো', strokes: 5, jlpt: 'N5', radical: '口 (Mouth)',
+    on: 'コ (ko)', kun: 'ふる.い (furu.i)', components: '十 (দশ) + 口 (মুখ)',
+    story: 'দশটি প্রজন্ম ধরে বা ১০ জন মানুষের মুখ ঘুরে যে গল্প বা জিনিস আজ পর্যন্ত এসেছে, তা অত্যন্ত "পুরনো"।',
+    examples: [{word: '古い', furigana: 'ふるい', romaji: 'furui', meaning: 'পুরনো'}, {word: '中古車', furigana: 'ちゅうこしゃ', romaji: 'chūkōsha', meaning: 'সেকেন্ড হ্যান্ড গাড়ি'}],
+    sentences: [{jp: 'これは古い本です。', furi: 'これはふるいほんですか。', rom: 'Kore wa furui hon desu.', bn: 'এটি একটি পুরনো বই।'}]
+  },
+  {
+    kanji: '上', lesson: '8', meaning: 'উপরে', strokes: 3, jlpt: 'N5', radical: '一 (One)',
+    on: 'ジョウ (jō)', kun: 'うえ / あ.げる (ue / a.geru)', components: 'ト + 一',
+    story: 'একটি অনুভূমিক সমতল লাইনের উপরের দিকে খাড়া নির্দেশক চিহ্ন দিয়ে "উপরে" বোঝানো হচ্ছে।',
+    examples: [{word: '上手', furigana: 'じょうず', romaji: 'jōzu', meaning: 'দক্ষ / পারদর্শী'}, {word: '屋上', furigana: 'おくじょう', romaji: 'okujō', meaning: 'ছাদ'}],
+    sentences: [{jp: '机の上に本があります。', furi: 'つくえのうえにほんがあります。', rom: 'Tsukue no ue ni hon ga imasu.', bn: 'টেবিলের উপরে বই আছে।'}]
+  },
+  {
+    kanji: '下', lesson: '8', meaning: 'নিচে / কম', strokes: 3, jlpt: 'N5', radical: '一 (One)',
+    on: 'カ / ゲ (ka / ge)', kun: 'した / さ.げる (shita / sa.geru)', components: '下 (নিচে)',
+    story: 'একটি প্রধান সমতল ভিত্তিরেখার নিচের দিকে ঝুলে থাকা খাড়া রেখা দ্বারা "নিচে" নির্দেশ করা হয়েছে।',
+    examples: [{word: '地下鉄', furigana: 'ちかてつ', romaji: 'chikatetsu', meaning: 'পাতাল রেল'}, {word: '下手', furigana: 'へた', romaji: 'heta', meaning: 'অদক্ষ'}],
+    sentences: [{jp: '椅子の下に猫がいます。', furi: 'いすのしたにねこがいます。', rom: 'Isu no shita ni neko ga imasu.', bn: 'চেয়ারের নিচে একটি বিড়াল আছে।'}]
+  },
+  {
+    kanji: '中', lesson: '8', meaning: 'ভেতরে / মধ্যে / মাঝখানে', strokes: 4, jlpt: 'N5', radical: '丨 (Stick)',
+    on: 'チュウ (chū)', kun: 'なか (naka)', components: '口 (বক্স) + 丨 (খাড়া দাগ)',
+    story: 'একটি চারকোনা বাক্সের ঠিক মাঝখান দিয়ে একটি তীর বা কাঠি ভেদ করে চলে গেছে—যা "ভেতর" বা "কেন্দ্র" নির্দেশক।',
+    examples: [{word: '一日中', furigana: 'いちにちじゅう', romaji: 'ichinichijū', meaning: 'সারাদিন ধরে'}, {word: '中国', furigana: 'ちゅうごく', romaji: 'chūgoku', meaning: 'চীন'}],
+    sentences: [{jp: 'カバンの中に何がありますか？', furi: 'かばんのなかになにがありますか？', rom: 'Kaban no naka ni nani ga arimasu ka?', bn: 'ব্যাগের ভেতর কী আছে?'}]
+  },
+  {
+    kanji: '月', lesson: '9', meaning: 'চাঁদ / মাস', strokes: 4, jlpt: 'N5', radical: '月 (Moon)',
+    on: 'ゲツ / ガツ (getsu / gatsu)', kun: 'つき (tsuki)', components: '月 (চাঁদ)',
+    story: 'আকাশের বাঁকা অর্ধচন্দ্রাকৃতির মেঘে ঢাকা চাঁদ এবং তার ভেতরের চমৎকার দুটি খাঁজকাটা আলো।',
+    examples: [{word: '月曜日', furigana: 'げつようび', romaji: 'getsuyōbi', meaning: 'সোমবার'}, {word: '今月', furigana: 'こんげつ', romaji: 'kongetsu', meaning: 'এই মাস'}],
+    sentences: [{jp: '月がとても綺麗ですね。', furi: 'つきがとてもきれいですね。', rom: 'Tsuki ga totemo kirei desu ne.', bn: 'চাঁদটি আজ অনেক সুন্দর, তাই না?'}]
+  },
+  {
+    kanji: '金', lesson: '9', meaning: 'টাকা / সোনা / ধাতু', strokes: 8, jlpt: 'N5', radical: '金 (Gold)',
+    on: 'キン (kin)', kun: 'かね / おかね (kane)', components: '人 (ছাদ) + 王 (রাজা) + দুই ফোঁটা সোনা',
+    story: 'রাজার মাটির নিচের গোপন খনিতে সোনার খাঁটি গলানো দলা চকচক করছে—এটিই ধনসম্পদ বা টাকা।',
+    examples: [{word: 'お金', furigana: 'おかね', romaji: 'okane', meaning: 'টাকা'}, {word: '金曜日', furigana: 'きんようび', romaji: 'kinyōbi', meaning: 'শুক্রবার'}],
+    sentences: [{jp: 'お金がありません。', furi: 'おかねがありません。', rom: 'Okane ga arimasen.', bn: 'আমার কাছে কোনো টাকা নেই।'}]
+  },
+  {
+    kanji: '火', lesson: '9', meaning: 'আগুন', strokes: 4, jlpt: 'N5', radical: '火 (Fire)',
+    on: 'カ (ka)', kun: 'ひ (hi)', components: '火 (আগুন)',
+    story: 'মাঝখানে জ্বলজ্বলে মূল কাঠের আগুন এবং দুপাশে ছিটকে যাওয়া দুটি আগুনের স্ফুলিঙ্গ।',
+    examples: [{word: '火曜日', furigana: 'かようび', romaji: 'kayōbi', meaning: 'মঙ্গলবার'}, {word: '火山', furigana: 'かざん', romaji: 'kazan', meaning: 'আগ্নেয়গিরি'}],
+    sentences: [{jp: '火に気をつけて。', furi: 'ひにきをつけて。', rom: 'Hi ni ki o tsukete.', bn: 'আগুন থেকে সাবধানে থেকো।'}]
+  },
+  {
+    kanji: '土', lesson: '9', meaning: 'মাটি / পৃথিবী', strokes: 3, jlpt: 'N5', radical: '土 (Earth)',
+    on: 'ド / ト (do / to)', kun: 'つち (tsuchi)', components: '土 (মাটি)',
+    story: 'সমতল মাটির বুক চিরে একটি কচি সবুজ চারা গাছ খাড়া হয়ে সোজা উপরের দিকে বাড়ছে।',
+    examples: [{word: '土曜日', furigana: 'どようび', romaji: 'doyōbi', meaning: 'শনিবার'}, {word: '土地', furigana: 'とち', romaji: 'tochi', meaning: 'জমি / ভূমি'}],
+    sentences: [{jp: '土曜日は仕事が休みです。', furi: 'どようびはしごとがやすみです。', rom: 'Doyōbi wa shigoto ga yasumi desu.', bn: 'শনিবার আমার কাজ ছুটি থাকে।'}]
+  },
+  {
+    kanji: '日', lesson: '9', meaning: 'সূর্য / দিন', strokes: 4, jlpt: 'N5', radical: '日 (Sun)',
+    on: 'ニチ / ジツ (nichi / jitsu)', kun: 'ひ / び (hi / bi)', components: '日 (সূর্য)',
+    story: 'একটি চারকোনা বক্সের মাঝখানে রেখা। প্রাচীনকালের গোলাকার সূর্যের সরলীকৃত লেখার রূপ।',
+    examples: [{word: '日曜日', furigana: 'にちようび', romaji: 'nichiyōbi', meaning: 'रविवार'}, {word: '毎日', furigana: 'まいにち', romaji: 'mainichi', meaning: 'প্রতিদিন'}],
+    sentences: [{jp: '日曜日に日本へ行きます。', furi: 'にちようびににほんへいきます。', rom: 'Nichiyōbi ni nihon he ikimasu.', bn: 'আমি রবিবারে জাপানে যাবো।'}]
+  },
+  {
+    kanji: '木', lesson: '9', meaning: 'গাছ / কাঠ', strokes: 4, jlpt: 'N5', radical: '木 (Tree)',
+    on: 'モク / ボク (moku / boku)', kun: 'き (ki)', components: '木 (গাছ)',
+    story: 'একটি সোজা ট্রাঙ্ক বা কান্ড বিশিষ্ট বড় গাছ যার ডালপালা দুপাশে এবং শিকড় নিচে ছড়ানো।',
+    examples: [{word: '木曜日', furigana: 'もくようび', romaji: 'mokuyōbi', meaning: 'বৃহস্পতিবার'}, {word: '木の下', furigana: 'きのした', romaji: 'ki no shita', meaning: 'গাছের নিচে'}],
+    sentences: [{jp: '庭に大きな木があります。', furi: 'にわにおおきなきがあります。', rom: 'Niwa ni ookina ki ga arimasu.', bn: 'বাগানে একটি বড় গাছ আছে।'}]
+  },
+  {
+    kanji: '曜', lesson: '9', meaning: 'সপ্তাহের দিন / উজ্জ্বল নক্ষত্র', strokes: 18, jlpt: 'N5', radical: '日 (Sun)',
+    on: 'ヨウ (yō)', kun: '-', components: '日 (সূর্য) + ヨヨ + 隹 (পাখি)',
+    story: 'সূর্যের আলোয় ডানা মেলে আকাশে ওড়া পাখির ডানার কম্পন দিয়ে দিনের উজ্জ্বল গতি হিসাব করা।',
+    examples: [{word: '曜日', furigana: 'ようび', romaji: 'yōbi', meaning: 'সপ্তাহের বার / দিন'}],
+    sentences: [{jp: '何曜日が好きですか？', furi: 'なんようびがすきですか？', rom: 'Nan yōbi ga suki desu ka?', bn: 'আপনার কোন বারটি পছন্দ?'}]
+  },
+  {
+    kanji: '朝', lesson: '10', meaning: 'সকাল', strokes: 12, jlpt: 'N5', radical: '月 (Moon)',
+    on: 'チョウ (chō)', kun: 'あさ (asa)', components: '十 + 日 + 十 + 月 (চাঁদ)',
+    story: 'ভোরবেলা যখন ঘাসের আড়াল থেকে সূর্য উঠছে অথচ চাঁদের আলো তখনও আকাশ থেকে পুরোপুরি মুছে যায়নি।',
+    examples: [{word: '朝ご飯', furigana: 'あさごはん', romaji: 'asagohan', meaning: 'সকালের নাস্তা'}, {word: '毎朝', furigana: 'まいあさ', romaji: 'maiasa', meaning: 'প্রতি সকাল'}],
+    sentences: [{jp: '毎朝６時に起きます。', furi: 'まいあさろくじにおきます。', rom: 'Maiasa roku-ji ni okimasu.', bn: 'আমি প্রতি সকালে ৬ টায় ঘুম থেকে উঠি।'}]
+  },
+  {
+    kanji: '時', lesson: '10', meaning: 'সময় / ঘন্টা', strokes: 10, jlpt: 'N5', radical: '日 (Sun)',
+    on: 'ジ (ji)', kun: 'とき (toki)', components: '日 (সূর্য) + 寺 (মন্দির)',
+    story: 'প্রাচীনকালে মন্দিরের ঘণ্টার আওয়াজ এবং সূর্যের অবস্থান মেপে নিখুঁত "সময়" নির্ধারণ করা হতো।',
+    examples: [{word: '時間', furigana: 'じかん', romaji: 'jikan', meaning: 'সময় / ঘন্টা'}, {word: '１２時', furigana: 'じゅうにじ', romaji: 'jūni-ji', meaning: '১২ টা'}],
+    sentences: [{jp: '今、何時ですか？', furi: 'いま、なんじですか？', rom: 'Ima, nan ji desu ka?', bn: 'এখন কয়টা বাজে?'}]
+  },
+  {
+    kanji: '昼', lesson: '10', meaning: 'দুপুর / মধ্যাহ্ন', strokes: 9, jlpt: 'N5', radical: '日 (Sun)',
+    on: 'チュウ (chū)', kun: 'ひる (hiru)', components: '尺 + 日 (সূর্য)',
+    story: 'দিনের সূর্য যখন মাথার উপর ঠিক সোজা স্কেলে পরিমাপযোগ্য খাঁড়া অবস্থানে থাকে, তখন দুপুর।',
+    examples: [{word: '昼休み', furigana: 'ひるやすみ', romaji: 'hiruyasumi', meaning: 'দুপুরের বিরতি'}, {word: '昼ご飯', furigana: 'ひるごはん', romaji: 'hirugohan', meaning: 'দুপুরের খাবার'}],
+    sentences: [{jp: '昼休みに公園へ行きます。', furi: 'ひるやすみにこうえんへいきます。', rom: 'Hiruyasumi ni kōen he ikimasu.', bn: 'দুপুরের ছুটিতে আমি পার্কে যাই।'}]
+  },
+  {
+    kanji: '分', lesson: '10', meaning: 'মিনিট / অংশ / ভাগ করা', strokes: 4, jlpt: 'N5', radical: '刀 (Knife)',
+    on: 'フン / ブン (fun / bun)', kun: 'わ.かる (wa.karu)', components: '八 (ভাগ করা) + 刀 (ছুরি)',
+    story: 'একটি ধারালো ছুরি দিয়ে কোনো জিনিসকে সমান দুই ভাগে কেটে টুকরো অংশ বা মিনিট নির্ধারণ করা।',
+    examples: [{word: '１０分', furigana: 'じゅっぷん', romaji: 'juppun', meaning: '১০ মিনিট'}, {word: '半分', furigana: 'はんぶん', romaji: ' অর্ধেক'}],
+    sentences: [{jp: 'あと５分待ってください。', furi: 'あとごふんまってください。', rom: 'Ato go-fun matte kudasai.', bn: 'আর মাত্র ৫ মিনিট অপেক্ষা করুন।'}]
+  },
+  {
+    kanji: '夜', lesson: '10', meaning: 'রাত / রাত্রি', strokes: 8, jlpt: 'N5', radical: '夕 (Evening)',
+    on: 'ヤ (ya)', kun: 'よる / よ (yoru / yo)', components: '亠 + 亻 + タ (সন্ধ্যা)',
+    story: 'মানুষ যখন কাজ শেষে তার ঘরের ছাদের নিচে এসে সন্ধ্যার অন্ধকারে ঘুমিয়ে পড়ার প্রস্তুতি নেয়, তা-ই রাত।',
+    examples: [{word: '夜中', furigana: 'よなか', romaji: 'yonaka', meaning: 'মধ্যরাত'}, {word: '今夜', furigana: 'こんや', romaji: 'konya', meaning: 'আজ রাত'}],
+    sentences: [{jp: '夜は早く寝ます。', furi: 'よるははやくねます。', rom: 'Yoru wa hayaku nemasu.', bn: 'আমি রাতে তাড়াতাড়ি ঘুমিয়ে পড়ি।'}]
+  },
+  {
+    kanji: '半', lesson: '10', meaning: 'অর্ধেক / সাড়ে', strokes: 5, jlpt: 'N5', radical: '十 (Ten)',
+    on: 'ハン (han)', kun: 'なか.ば (naka.ba)', components: '丷 + 二 + 丨',
+    story: 'একটি সোজা রেখাকে উপর থেকে টেনে সমান দুটি অংশে খণ্ডিত বা অর্ধেক করে দেওয়া।',
+    examples: [{word: '２時半', furigana: 'にじはん', romaji: 'ni-ji han', meaning: 'আড়াইটা (২:৩০)'}, {word: '半年', furigana: 'はんねん', romaji: 'han-nen', meaning: 'অর্ধবছর'}],
+    sentences: [{jp: '会議は３時半に終わります。', furi: 'かいぎはさんじはんにおわります。', rom: 'Kaigi wa san-ji han ni owarimasu.', bn: 'মিটিং সাড়ে তিনটায় শেষ হবে।'}]
+  },
+  {
+    kanji: '枚', lesson: '10', meaning: 'পাতলা জিনিসের কাউন্টার (কাগজ/শার্ট)', strokes: 8, jlpt: 'N5', radical: '木 (Tree)',
+    on: 'マイ (mai)', kun: '-', components: '木 (গাছ) + 攵 (কাজ করা/আঘাত)',
+    story: 'গাছের কাঠকে চমৎকার মসৃণ পাতলা তক্তা বা কাগজের শিটে পরিণত করার পরিমাপক ইউনিট।',
+    examples: [{word: '２枚', furigana: 'にまい', romaji: 'nimai', meaning: 'দুটি (পাতলা জিনিস)'}, {word: '枚数', furigana: 'まいすう', romaji: 'maisuu', meaning: 'কাগজের সংখ্যা'}],
+    sentences: [{jp: '切手を３枚ください。', furi: 'きってをさんまいください。', rom: 'Kitte o san-mai kudasai.', bn: 'আমাকে তিনটি ডাকটিকিট দিন।'}],
+  },
+  {
+    kanji: '西', lesson: '13', meaning: 'পশ্চিম', strokes: 6, jlpt: 'N5', radical: '見 (See)',
+    on: 'セイ / サイ (sei / sai)', kun: 'にし (nishi)', components: '西 (পশ্চিম)',
+    story: 'পাখিরা সূর্য ডোবার সময় তাদের চারকোনা আরামদায়ক খাঁচায় বা বাসায় ফিরে যাওয়ার দিক হলো পশ্চিম।',
+    examples: [{word: '西口', furigana: 'にしぐち', romaji: 'nishiguchi', meaning: 'পশ্চিম প্রবেশদ্বার'}, {word: '北西', furigana: 'ほくせい', romaji: 'hokusei', meaning: 'উত্তর-পশ্চিম'}],
+    sentences: [{jp: '太陽は西に沈みます。', furi: 'たいようはにしにしずみます。', rom: 'Taiyō wa nishi ni shizumimasu.', bn: 'সূর্য পশ্চিম দিকে অস্ত যায়।'}]
+  },
+
+  // Numbers Pack (Lesson 16 Focus)
+  {
+    kanji: '一', lesson: '16', meaning: 'এক', strokes: 1, jlpt: 'N5', radical: '一 (One)',
+    on: 'イチ (ichi)', kun: 'ひと.つ (hito.tsu)', components: '一 (এক)',
+    story: 'একটিমাত্র আনুভূমিক আঙুল বা কাঠি দিয়ে ১ সংখ্যাটি প্রকাশ করা হয়েছে।',
+    examples: [{word: '一月', furigana: 'いちがつ', romaji: 'ichigatsu', meaning: 'জানুয়ারি'}, {word: '一人', furigana: 'ひとり', romaji: 'hitori', meaning: 'একজন'}],
+    sentences: [{jp: 'リンゴを一つ買いました。', furi: 'りんごをひとつかいました。', rom: 'Ringo o hitotsu kaimashita.', bn: 'আমি একটি আপেল কিনেছি।'}]
+  },
+  {
+    kanji: '二', lesson: '16', meaning: 'দুই', strokes: 2, jlpt: 'N5', radical: '二 (Two)',
+    on: 'ニ (ni)', kun: 'ふた.つ (futa.tsu)', components: '二 (দুই)',
+    story: 'দুটি সমান্তরাল কাঠি বা লাইন টেনে খুব সহজভাবে ২ সংখ্যাটি নির্দেশ করছে।',
+    examples: [{word: '二月', furigana: 'にがつ', romaji: 'nigatsu', meaning: 'ফেব্রুয়ারি'}, {word: '二人', furigana: 'ふたり', romaji: 'futari', meaning: 'দুজন'}],
+    sentences: [{jp: '子どもが二人います。', furi: 'こどもがふたりいます。', rom: 'Kodomo ga futari imasu.', bn: 'দুটি শিশু আছে।'}]
+  },
+  {
+    kanji: '三', lesson: '16', meaning: 'তিন', strokes: 3, jlpt: 'N5', radical: '一 (One)',
+    on: 'サン (san)', kun: 'みっ.つ (mit.tsu)', components: '三 (তিন)',
+    story: 'তিনটি সমান্তরাল রেখা একসাথে এঁকে ৩ সংখ্যাটির রূপ দেওয়া হয়েছে।',
+    examples: [{word: '三月', furigana: 'さんがつ', romaji: 'sangatsu', meaning: 'মার্চ'}, {word: '三日', furigana: 'みっか', romaji: 'mikka', meaning: 'তিন তারিখ'}],
+    sentences: [{jp: '三日間、休みます。', furi: 'みっかかん、やすみます。', rom: 'Mikkakan yasumimasu.', bn: 'তিন দিন ছুটি কাটাবো।'}]
+  },
+  {
+    kanji: '四', lesson: '16', meaning: 'চার', strokes: 5, jlpt: 'N5', radical: '囗 (Enclosure)',
+    on: 'シ (shi)', kun: 'よん / よっ.つ (yon / yot.tsu)', components: '囗 (বক্স) + 儿 (পা)',
+    story: 'একটি চারকোনা ঘরের জানালা দিয়ে ভেতরের চারদিকের বাতাস ও পরিবেশ দেখা যাচ্ছে।',
+    examples: [{word: '四月', furigana: 'しがつ', romaji: 'shigatsu', meaning: 'এপ্রিল'}, {word: '四年生', furigana: 'よねんせい', romaji: 'yonensei', meaning: 'চতুর্থ বর্ষের ছাত্র'}],
+    sentences: [{jp: 'この車は四人乗りです。', furi: 'このくるまはよにんのりです。', rom: 'Kono kuruma wa yonin nori desu.', bn: 'এই গাড়িটি চারজন বসার উপযোগী।'}]
+  },
+  {
+    kanji: '五', lesson: '16', meaning: 'পাঁচ', strokes: 4, jlpt: 'N5', radical: '二 (Two)',
+    on: 'ゴ (go)', kun: 'つつ.つ (itutsu)', components: '五 (পাঁচ)',
+    story: 'প্রাচীনকালে হাতের ৫টি আঙুলকে ক্রিসক্রস ডিজাইনে গণনা করার মেকানিজম।',
+    examples: [{word: '五月', furigana: 'ごがつ', romaji: 'gogatsu', meaning: 'মে'}, {word: '五円', furigana: 'ごえん', romaji: 'goen', meaning: '৫ ইয়েন'}],
+    sentences: [{jp: 'みかんが五つあります。', furi: 'みかんがいつつあります。', rom: 'Mikan ga itsutsu arimasu.', bn: 'পাঁচটি কমলা লেবু আছে।'}]
+  },
+  {
+    kanji: '六', lesson: '16', meaning: 'ছয়', strokes: 4, jlpt: 'N5', radical: '亠 (Lid)',
+    on: 'ロク (roku)', kun: 'むっ.つ (mut.tsu)', components: '亠 + 八',
+    story: 'একটি ছোট কুঁড়েঘরের চাল ও তার নিচে দাঁড়িয়ে থাকা দুটি পা সম্বলিত জ্যামিতিক নকশা।',
+    examples: [{word: '六月', furigana: 'ろくがつ', romaji: 'rokugatsu', meaning: 'জুন'}, {word: '六本木', furigana: 'ろっぽんぎ', romaji: 'roppongi', meaning: 'রপ্পোঙ্গি (জাপানের জায়গা)'}],
+    sentences: [{jp: '六時にここに来てください。', furi: 'ろくじにここにきてください。', rom: 'Roku ji ni koko ni kite kudasai.', bn: 'ছয়টায় এখানে চলে এসো।'}]
+  },
+  {
+    kanji: '七', lesson: '16', meaning: 'সাত', strokes: 2, jlpt: 'N5', radical: '一 (One)',
+    on: 'シチ (shichi)', kun: 'なな.つ (nana.tsu)', components: '七 (সাত)',
+    story: 'একটি সোজা লাইনকে মাঝখান দিয়ে কেটে উপরের দিকে বাঁকিয়ে ৭ এর শেপ তৈরি করা।',
+    examples: [{word: '七月', furigana: 'しちがつ', romaji: 'shichigatsu', meaning: 'জুলাই'}, {word: '七夕', furigana: 'たなばた', romaji: 'tanabata', meaning: 'তানাবাতা উৎসব'}],
+    sentences: [{jp: '私は七本のペンを持っています。', furi: 'わたしはななほんのぺんをもっています。', rom: 'Watashi wa nana-hon no pen o motteimasu.', bn: 'আমার কাছে সাতটি কলম আছে।'}]
+  },
+  {
+    kanji: '八', lesson: '16', meaning: 'আট', strokes: 2, jlpt: 'N5', radical: '八 (Eight)',
+    on: 'ハチ (hachi)', kun: 'やっ.つ (yat.tsu)', components: '八 (আট)',
+    story: 'দুই দিকে দুটি বাঁকা দাগ বাইরের দিকে ছড়িয়ে দিয়ে কোনো জিনিসকে বড় ৮ ভাগে ওপেন করা।',
+    examples: [{word: '八月', furigana: 'はちがつ', romaji: 'hachigatsu', meaning: 'আগস্ট'}, {word: '八百屋', furigana: 'やおや', romaji: 'yaoya', meaning: 'সবজি বিক্রেতা'}],
+    sentences: [{jp: 'このバナナは八百円です。', furi: 'このばななははちひゃくえんです。', rom: 'Kono banana wa hachyaku en desu.', bn: 'এই কলাগুলোর দাম ৮০০ ইয়েন।'}]
+  },
+  {
+    kanji: '九', lesson: '16', meaning: 'নয়', strokes: 2, jlpt: 'N5', radical: '乙 (Second)',
+    on: 'キュウ / ク (kyū / ku)', kun: 'ここの.つ (kokono.tsu)', components: '九 (নয়)',
+    story: 'সংখ্যা ১০ এর ঠিক কাছাকাছি গিয়ে এক কম থাকা বাঁকানো হুক বিশিষ্ট ক্যারেক্টার।',
+    examples: [{word: '九月', furigana: 'くがつ', romaji: 'kugatsu', meaning: 'সেপ্টেম্বর'}, {word: '九州', furigana: 'きゅうしゅう', romaji: 'kyūshū', meaning: 'কিউশু দ্বীপ'}],
+    sentences: [{jp: '九時にテストが始まります。', furi: 'くじにてすとがはじまります。', rom: 'Ku ji ni tesuto ga hajimarisut.', bn: 'নয়টায় পরীক্ষা শুরু হবে।'}]
+  },
+  {
+    kanji: '十', lesson: '16', meaning: 'দশ', strokes: 2, jlpt: 'N5', radical: '十 (Ten)',
+    on: 'ジュウ (jū)', kun: 'とお (tō)', components: '十 (দশ)',
+    story: 'একটি লম্বালম্বি এবং একটি আড়াআড়ি দাগ প্লাস চিহ্নের মতো মিলে পূর্ণাঙ্গ ১০ সংখ্যাটি তৈরি করেছে।',
+    examples: [{word: '十月', furigana: 'じゅうがつ', romaji: 'jūgatsu', meaning: 'অক্টোবর'}, {word: '十分', furigana: 'じゅうぶん', romaji: 'পর্যাপ্ত / যথেষ্ট'}],
+    sentences: [{jp: '十日間日本を旅行しました。', furi: 'とおかかんにほんをりょこうしました。', rom: 'Tōkakan nihon o ryokō shimashita.', bn: 'আমি দশ দিন জাপানে ভ্রমণ করেছি।'}]
+  },
+
+  // Intermediate Stage - N4/N5 Practical Mix (Lessons 1-18 Continual)
+  {
+    kanji: '学', lesson: '1', meaning: 'শিক্ষা / ছাত্র / অধ্যায়ন', strokes: 8, jlpt: 'N5', radical: '子 (Child)',
+    on: 'ガク (gaku)', kun: 'まな.ぶ (mana.bu)', components: 'ツ + 宀 (ছাদ) + 子 (শিশু)',
+    story: 'একটি স্কুল ঘরের ছাদের নিচে ছোট শিশুরা একসাথে বসে শিক্ষকের কাছে "পড়াশোনা" করছে।',
+    examples: [{word: '学生', furigana: 'がくせい', romaji: 'gakusei', meaning: 'ছাত্র'}, {word: '大学', furigana: 'だいがく', romaji: 'daigaku', meaning: 'বিশ্ববিদ্যালয়'}],
+    sentences: [{jp: '日本語学校で勉強しています。', furi: 'にほんごがっこうでべんきょうしています。', rom: 'Nihongo gakkō de benkyō shiteimasu.', bn: 'আমি জাপানি ভাষার স্কুলে পড়াশোনা করছি।'}]
+  },
+  {
+    kanji: '生', lesson: '1', meaning: 'জীবন / জন্ম / ছাত্র / তাজা', strokes: 5, jlpt: 'N5', radical: '生 (Life)',
+    on: 'セイ / ショウ (sei / shō)', kun: 'う.まれる / い.きる (u.māru / i.kiru)', components: '生 (অঙ্কুর)',
+    story: 'উর্বর মাটির বুক চিরে একটি তাজা সবুজ উদ্ভিদের কচি কুঁড়ি বা অঙ্কুরোদগম হচ্ছে—যা জীবনের প্রতীক।',
+    examples: [{word: '先生', furigana: 'せんせい', romaji: 'sensei', meaning: 'শিক্ষক'}, {word: '誕生日', furigana: 'たんじょうび', romaji: 'tanjōbi', meaning: 'জন্মদিন'}],
+    sentences: [{jp: '先生、こんにちは！', furi: 'せんせい、こんにちは！', rom: 'Sensei, konnichiwa!', bn: 'শিক্ষক, শুভ দুপুর!'}]
+  },
+  {
+    kanji: '仕', lesson: '1', meaning: 'সেবা করা / অফিসিয়াল কাজ', strokes: 5, jlpt: 'N4', radical: '人 (Human)',
+    on: 'シ (shi)', kun: 'つか.える (tsuka.eru)', components: '亻 (মানুষ) + 士 (সমুরাই/যোদ্ধা)',
+    story: 'একজন বিশ্বস্ত মানুষ যখন দেশের বড় কোনো উচ্চপদস্থ যোদ্ধা বা কর্মকর্তার অধীনে অফিশিয়াল "চাকুরি" বা ডিউটি করে।',
+    examples: [{word: '仕事', furigana: 'しごと', romaji: 'shigoto', meaning: 'কাজ / চাকরি'}],
+    sentences: [{jp: '今日の仕事は忙しいです。', furi: 'きょうのしごとはいそがしいです。', rom: 'Kyō no shigoto wa isogashii desu.', bn: 'আজকের কাজ অনেক ব্যস্ত।'}]
+  },
+  {
+    kanji: '事', lesson: '1', meaning: 'বিষয় / ঘটনা / কাজ', strokes: 8, jlpt: 'N4', radical: '亅 (Hook)',
+    on: 'ジ (ji)', kun: 'こと (koto)', components: '事 (বিষয়)',
+    story: 'একটি ফাইলে বা কলমে সব রেকর্ড লিখে রাখা হচ্ছে যাতে কোনো গুরুত্বপূর্ণ ঘটনা বা বিষয়ের কাজ মিস না হয়।',
+    examples: [{word: '食事', furigana: 'しょくじ', romaji: 'shokuji', meaning: 'খাবার / মিল'}, {word: '用事', furigana: 'ようじ', romaji: 'yōji', meaning: 'প্রয়োজনীয় কাজ'}],
+    sentences: [{jp: '何か面白い事がありますか？', furi: 'なにかおもしろいことがありますか？', rom: 'Nani ka omashiroi koto ga arimasu ka?', bn: 'আকর্ষণীয় কোনো ঘটনা আছে নাকি?'}]
+  },
+  {
+    kanji: '校', lesson: '1', meaning: 'স্কুল / ভবন / যাচাই', strokes: 10, jlpt: 'N5', radical: '木 (Tree)',
+    on: 'コウ (kō)', kun: '-', components: '木 (গাছ) + 交 (বিনিময়)',
+    story: 'কাঠের তৈরি একটি সুন্দর প্রাতিষ্ঠানিক ভবন যেখানে জ্ঞানের আদান-প্রদান বা বিনিময় হয়—তা-ই স্কুল।',
+    examples: [{word: '学校', furigana: 'がっこう', romaji: 'gakkō', meaning: 'স্কুল'}, {word: '高校', furigana: 'こうこう', romaji: 'kōkō', meaning: 'হাই স্কুল'}],
+    sentences: [{jp: '学校は８時に始まります。', furi: 'がっこうははちじにはじまります。', rom: 'Gakkō wa hachi-ji ni hajimarimasu.', bn: 'স্কুল আটটায় শুরু হয়।'}]
+  },
+  {
+    kanji: '元', lesson: '1', meaning: 'মূল / স্বাস্থ্য / উৎস', strokes: 4, jlpt: 'N5', radical: '儿 (Legs)',
+    on: 'ゲン / ガン (gen / gan)', kun: 'もと (moto)', components: '二 + 儿 (মানুষের পা)',
+    story: 'একজন মানুষ দুই পায়ে শক্ত হয়ে মাটির উপর সোজা হয়ে দাঁড়িয়ে আছে—যা সুস্থতার প্রতীক।',
+    examples: [{word: '元気', furigana: 'げんき', romaji: 'genki', meaning: 'সুস্থ / প্রাণবন্ত'}, {word: '元日', furigana: 'がんじつ', romaji: 'ganjitsu', meaning: 'বছরের প্রথম দিন'}],
+    sentences: [{jp: 'お元気ですか？', furi: 'おげんきですか？', rom: 'O-genki desu ka?', bn: 'আপনি কেমন আছেন?'}]
+  },
+  {
+    kanji: '気', lesson: '1', meaning: 'মন / আত্মা / হাওয়া / আবহাওয়া', strokes: 6, jlpt: 'N5', radical: '气 (Steam)',
+    on: 'キ (ki)', kun: '-', components: '气 (বাষ্প/হাওয়া) + 𠂉',
+    story: 'রান্না করার পাত্র থেকে বাষ্পের হাওয়া মেঘের মতো আকাশে উড়ছে—যা মনের অদৃশ্য শক্তির মতো।',
+    examples: [{word: '天気', furigana: 'てんき', romaji: 'tenki', meaning: 'আবহাওয়া'}, {word: '電気', furigana: 'でんき', romaji: 'denki', meaning: 'বিদ্যুৎ / আলো'}],
+    sentences: [{jp: '体に気をつけてください。', furi: 'からだにきをつけてください。', rom: 'Karada ni ki o tsukete kudasai.', bn: 'নিজের শরীরের প্রতি খেয়াল রাখবেন।'}]
+  },
+  {
+    kanji: '活', lesson: '1', meaning: 'প্রাণবন্ত / জীবনযাপন / সক্রিয়', strokes: 9, jlpt: 'N4', radical: '水 (Water)',
+    on: 'カツ (katsu)', kun: '-', components: '氵 (পানি) + 舌 (জিহ্বা)',
+    story: 'জিহ্বায় পানি পেলে তৃষ্ণার্ত মানুষ যেমন নতুন প্রাণ পায়, তেমনই মানব জীবনের গতি সচল হয়।',
+    examples: [{word: '生活', furigana: 'せいかつ', romaji: 'seikatsu', meaning: 'জীবনযাত্রা / লাইফস্টাইল'}, {word: '活動', furigana: 'かつどう', romaji: 'katsudō', meaning: 'কার্যক্রম'}],
+    sentences: [{jp: '日本での生活は楽しいです।', furi: 'にほんでのせいかつはたのしいです。', rom: 'Nihon de no seikatsu wa tanosashii desu.', bn: 'জাপানের জীবনযাপন অনেক আনন্দের।'}]
+  },
+  {
+    kanji: '忙', lesson: '1', meaning: 'ব্যস্ত', strokes: 6, jlpt: 'N4', radical: '心 (Heart)',
+    on: 'ボウ (bō)', kun: 'いそが.しい (isoga.shii)', components: '忄 (হৃদয়) + 亡 (হারিয়ে যাওয়া/ধ্বংস)',
+    story: 'কাজের চাপে যখন মানুষের নিজের মন বা হৃদয়টাই হারিয়ে যাওয়ার উপক্রম হয়, তখন সে চরম "ব্যস্ত"।',
+    examples: [{word: '忙しい', furigana: 'いそがしい', romaji: 'isogashii', meaning: 'ব্যস্ত'}, {word: '繁忙期', furigana: 'はんぼうき', romaji: 'hanbōki', meaning: 'ব্যস্ততম সময়'}],
+    sentences: [{jp: '今週はとても忙しいです。', furi: 'こんしゅうはとてもいそがしいです。', rom: 'Konshū wa totemo isogashii desu.', bn: 'এই সপ্তাহে আমি খুব ব্যস্ত।'}]
+  },
+  {
+    kanji: '去', lesson: '1', meaning: 'অতীত / চলে যাওয়া / ত্যাগ করা', strokes: 5, jlpt: 'N4', radical: '厶 (Private)',
+    on: 'キョ / コ (kyo / ko)', kun: 'さ.る (sa.ru)', components: '土 (মাটি) + 厶 (গোপন/কবর)',
+    story: 'মাটির নিচে সবকিছু গোপন হয়ে চলে গেছে বা অতীতে বিলীন হয়ে গেছে।',
+    examples: [{word: '去年', furigana: 'きょねん', romaji: 'kyonen', meaning: 'গত বছর'}, {word: '過去', furigana: 'かこ', romaji: 'kako', meaning: 'অতীত'}],
+    sentences: [{jp: '去年、日本へ来ました。', furi: 'きょねん、にほんへきました。', rom: 'Kyonen, nihon he kimashita.', bn: 'গত বছর আমি জাপানে এসেছি।'}]
+  },
+  {
+    kanji: '年', lesson: '1', meaning: 'বছর / বয়স', strokes: 6, jlpt: 'N5', radical: '干 (Dry)',
+    on: 'ネン (nen)', kun: 'とし (toshi)', components: '年 (বছর)',
+    story: 'মাঠে শস্য চাষ করে বছরে একবার ফসল কেটে ঘরে তোলার প্রাচীন ক্যালেন্ডার মেকানিজম।',
+    examples: [{word: '来年', furigana: 'らいねん', romaji: 'rainen', meaning: 'আগামী বছর'}, {word: '毎年', furigana: 'まいねん', romaji: 'প্রতি বছর'}],
+    sentences: [{jp: '今年の冬は寒いです。', furi: 'ことしのふゆはさむいです。', rom: 'Kotoshi no fuyu wa samui desu.', bn: 'এই বছরের শীত অনেক বেশি।'}]
+  },
+  {
+    kanji: '働', lesson: '1', meaning: 'কাজ করা / পরিশ্রম', strokes: 13, jlpt: 'N4', radical: '人 (Human)',
+    on: 'ドウ (dō)', kun: 'はたら.く (hatara.ku)', components: '亻 (মানুষ) + 重 (ভারী) + 力 (শক্তি)',
+    story: 'একজন মানুষ যখন নিজের সম্পূর্ণ শারীরিক শক্তি দিয়ে কোনো ভারী জিনিস বা কাজ সম্পন্ন করে।',
+    examples: [{word: '働く', furigana: 'はたらく', romaji: 'hataraku', meaning: 'কাজ করা'}, {word: '労働者', furigana: 'ろうどうしゃ', romaji: 'rōdōsha', meaning: 'শ্রমিক'}],
+    sentences: [{jp: '工場で働いています。', furi: 'こうじょうではたらいています。', rom: 'Kōjō de hataraiteimasu.', bn: 'আমি ফ্যাক্টরিতে কাজ করছি।'}]
+  },
+  {
+    kanji: '先', lesson: '1', meaning: 'আগে / ভবিষ্যৎ / অতীত / অগ্রিম', strokes: 6, jlpt: 'N5', radical: '儿 (Legs)',
+    on: 'セン (sen)', kun: 'さき (saki)', components: '土 (মাটি) + 儿 (পা)',
+    story: 'মাটির উপর দিয়ে অন্যের চেয়ে আগে বা সামনে হেঁটে এগিয়ে যাওয়ার চমৎকার দৃশ্য।',
+    examples: [{word: '先週', furigana: 'せんしゅう', romaji: 'senshū', meaning: 'গত সপ্তাহ'}, {word: '先生', furigana: 'せんせい', romaji: 'sensei', meaning: 'শিক্ষক'}],
+    sentences: [{jp: 'お先に失礼します。', furi: 'おさきにしつれいします。', rom: 'O-saki ni shitsurei shimasu.', bn: 'আমি আগেই বিদায় নিচ্ছি (অফিস কালচার)।'}]
+  },
+  {
+    kanji: '週', lesson: '1', meaning: 'সপ্তাহ', strokes: 11, jlpt: 'N5', radical: '⻌ (Walk)',
+    on: 'シュウ (shū)', kun: '-', components: '⻌ (রাস্তা/চলা) + 周 (চারপাশ/ঘোরা)',
+    story: 'সাতটি দিন চক্রাকারে ঘুরে যখন আবার আগের জায়গায় ফেরত আসে, তখন তাকে এক "সপ্তাহ" বলে।',
+    examples: [{word: '毎週', furigana: 'まいしゅう', romaji: 'maishū', meaning: 'প্রতি সপ্তাহ'}, {word: '週末', furigana: 'しゅうまつ', romaji: 'shūmatsu', meaning: 'উইকএন্ড / ছুটির দিন'}],
+    sentences: [{jp: '先週、映画を見ました。', furi: 'せんしゅう、えいがをみました。', rom: 'Senshū, eiga o mimashita.', bn: 'গত সপ্তাহে আমি মুভি দেখেছি।'}]
+  },
+
+  // Practical Modern Vocabulary Pack (Lessons 2-18 Continued)
+  {
+    kanji: '人', lesson: '2', meaning: 'মানুষ / ব্যক্তি / কাউন্টার', strokes: 2, jlpt: 'N5', radical: '人 (Human)',
+    on: 'ジン / ニン (jin / nin)', kun: 'ひと (hito)', components: '人 (মানুষ)',
+    story: 'দুই পায়ে ভর দিয়ে সোজা হয়ে দাঁড়িয়ে থাকা একজন মানুষের পাশের প্রোফাইল চিত্র।',
+    examples: [{word: '日本人', furigana: 'にほんじん', romaji: 'nihonjin', meaning: 'জাপানি মানুষ'}, {word: '三人', furigana: 'さんにん', romaji: 'sannin', meaning: 'তিনজন'}],
+    sentences: [{jp: 'あの人は誰ですか？', furi: 'あのひとはだれですか？', rom: 'Ano hito wa dare desu ka?', bn: 'ঐ মানুষটি কে?'}]
+  },
+  {
+    kanji: '英', lesson: '2', meaning: 'ইংল্যান্ড / চমৎকার / বীর', strokes: 8, jlpt: 'N5', radical: '⺾ (Grass)',
+    on: 'エイ (ei)', kun: '-', components: '⺾ (সবুজ ঘাস) + 央 (কেন্দ্র)',
+    story: 'ফুলের বাগানের কেন্দ্রস্থলে ফুটে থাকা সবচেয়ে চমৎকার এবং উজ্জ্বল অংশটি।',
+    examples: [{word: '英語', furigana: 'えいご', romaji: 'eigo', meaning: 'ইংরেজি ভাষা'}, {word: '英国', furigana: 'えいこく', romaji: 'eikoku', meaning: 'যুক্তরাজ্য'}],
+    sentences: [{jp: '英語が話せますか？', furi: 'えいごがなせますか？', rom: 'Eigo ga hanasemasu ka?', bn: 'আপনি কি ইংরেজি বলতে পারেন?'}]
+  },
+  {
+    kanji: '語', lesson: '2', meaning: 'ভাষা / কথা বলা', strokes: 14, jlpt: 'N5', radical: '言 (Speech)',
+    on: 'ゴ (go)', kun: 'かた.る (kata.ru)', components: '言 (কথা) + 五 (পাঁচ) + 口 (মুখ)',
+    story: 'পাঁচটি মুখ দিয়ে যখন নির্দিষ্ট নিয়মে কথা বের হয়, তখন তা একটি নির্দিষ্ট "ভাষা" গঠন করে।',
+    examples: [{word: '日本語', furigana: 'にほんご', romaji: 'nihongo', meaning: 'জাপানি ভাষা'}, {word: '中国語', furigana: 'ちゅうごくご', romaji: 'chūgokugo', meaning: 'চীনা ভাষা'}],
+    sentences: [{jp: '日本語は面白いです。', furi: 'にほんごはおもしろいです。', rom: 'Nihongo wa omashiroi desu.', bn: 'জাপানি ভাষা অনেক মজার।'}]
+  },
+  {
+    kanji: '音', lesson: '2', meaning: 'শব্দ / আওয়াজ', strokes: 9, jlpt: 'N5', radical: '音 (Sound)',
+    on: 'オン (on)', kun: 'おと / ね (oto / ne)', components: '立 (দাঁড়ানো) + 日 (সূর্য/বক্স)',
+    story: 'এক জায়গায় দাঁড়িয়ে মুখের বক্স বা বাদ্যযন্ত্র থেকে সুন্দর আওয়াজ বা সুর বের করা।',
+    examples: [{word: '音楽', furigana: 'おんがく', romaji: 'ongaku', meaning: 'গান / মিউজিক'}, {word: '発音', furigana: 'はつおん', romaji: 'hatsuon', meaning: 'উচ্চারণ'}],
+    sentences: [{jp: '音楽を聞くのが好きです。', furi: 'おんがくをきくのがすきです。', rom: 'Ongaku o kiku no ga suki desu.', bn: 'আমি গান শুনতে পছন্দ করি।'}]
+  },
+  {
+    kanji: '楽', lesson: '2', meaning: 'আনন্দদায়ক / সহজ / মিউজিক', strokes: 13, jlpt: 'N5', radical: '木 (Tree)',
+    on: 'ガク / ラク (gaku / raku)', kun: 'たの.しい (tano.shii)', components: '白 + 幺幺 + 木 (কাঠের ড্রাম)',
+    story: 'কাঠের স্ট্যান্ডের উপর ড্রাম সাজিয়ে আনন্দের সাথে ড্রাম বাজিয়ে গান-বাজনা বা উৎসব করা।',
+    examples: [{word: '楽しい', furigana: 'たのしい', romaji: 'tanosashii', meaning: 'মজার / আনন্দদায়ক'}, {word: '楽（な）', furigana: 'らく（な）', romaji: 'raku', meaning: 'সহজ / আরামদায়ক'}],
+    sentences: [{jp: '毎日が楽しいです。', furi: 'まいにちがたのしいです。', rom: 'Mainichi ga tanosashii desu.', bn: 'প্রতিটা দিন আনন্দের।'}]
+  },
+  {
+    kanji: '習', lesson: '2', meaning: 'শেখা / অনুশীলন', strokes: 11, jlpt: 'N5', radical: '羽 (Feathers)',
+    on: 'シュウ (shū)', kun: 'なら.う (nara.u)', components: '羽 (ডানা/পালক) + 白 (সাদা/পরিষ্কার)',
+    story: 'একটি ছোট পাখি বারবার তার সাদা ডানা ঝাপটে ওড়ার চমৎকার প্র্যাকটিস বা "অনুশীলন" করছে।',
+    examples: [{word: '習う', furigana: 'ならう', romaji: 'narau', meaning: 'শেখা'}, {word: '練習', furigana: 'れんしゅう', romaji: 'renshū', meaning: 'অনুশীলন / প্র্যাকটিস'}],
+    sentences: [{jp: '漢字を習っています。', furi: 'かんじをならっています。', rom: 'Kanji o naratteimasu.', bn: 'আমি কাঞ্জি শিখছি।'}]
+  },
+  {
+    kanji: '犬', lesson: '2', meaning: 'কুকুর', strokes: 4, jlpt: 'N5', radical: '犬 (Dog)',
+    on: 'ケン (ken)', kun: 'いぬ (inu)', components: '大 (বড়) + 丶 (ফোঁটা)',
+    story: 'একটি বড় আকৃতির বিশ্বস্ত প্রাণীর মাথার পাশে খাড়া চমৎকার কান বা লেজের ফোঁটা।',
+    examples: [{word: '子犬', furigana: 'こいぬ', romaji: 'coin(u)', meaning: 'কুকুরছানা'}],
+    sentences: [{jp: '白い犬が走っています。', furi: 'しろいいぬがはしっています。', rom: 'Shiroi inu ga hashitteimasu.', bn: 'একটি সাদা কুকুর দৌড়াচ্ছে।'}]
+  },
+  {
+    kanji: '話', lesson: '2', meaning: 'কথা বলা / গল্প', strokes: 13, jlpt: 'N5', radical: '言 (Speech)',
+    on: 'ワ (wa)', kun: 'はな.す / はなし (hana.su / hanashi)', components: '言 (কথা) + 舌 (জিহ্বা)',
+    story: 'মুখের ভেতরের জিহ্বা নাড়িয়ে মানুষের সাথে নিজের মনের ভাব বা কথা শেয়ার করা।',
+    examples: [{word: '話す', furigana: 'はなす', romaji: 'hanasu', meaning: 'কথা বলা'}, {word: '電話', furigana: 'でんわ', romaji: 'denwa', meaning: 'টেলিফোন'}],
+    sentences: [{jp: '日本語で話しましょう。', furi: 'にほんごではなしましょう。', rom: 'Nihongo de hanashimashō.', bn: 'চলুন জাপানি ভাষায় কথা বলি।'}]
+  },
+  {
+    kanji: '族', lesson: '2', meaning: 'পরিবার / গোত্র / উপজাতি', strokes: 11, jlpt: 'N5', radical: '方 (Direction)',
+    on: 'ゾク (zoku)', kun: '-', components: '方 (পতাকা) + 矢 (তীর)',
+    story: 'একই পতাকার নিচে বা সীমানায় একঝাঁক তীরন্দাজ বা রক্তের সম্পর্কের মানুষের যৌথ দল বা পরিবার।',
+    examples: [{word: '家族', furigana: 'かぞく', romaji: 'kazoku', meaning: 'পরিবার'}, {word: '親族', furigana: 'しんぞく', romaji: 'shinzoku', meaning: 'আত্মীয়স্বজন'}],
+    sentences: [{jp: '私の家族はバングラデシュにいます。', furi: 'わたしのかぞくはばんぐらでしゅにいます。', rom: 'Watashi no kazoku wa Banguradeshu ni imasu.', bn: 'আমার পরিবার বাংলাদেশে থাকে।'}]
+  },
+  {
+    kanji: '出', lesson: '2', meaning: 'বের হওয়া / বের করা / পাঠানো', strokes: 5, jlpt: 'N5', radical: '凵 (Open box)',
+    on: 'シュツ (shutsu)', kun: 'で.る / だ.す (de.ru / da.su)', components: '山 + 山 (পাহাড়ের উপর পাহাড়)',
+    story: 'একটি পাহাড় ভেদ করে আরেকটি পাহাড়ের চূড়া যেভাবে সোজা বাইরের দিকে বের হয়ে আসে।',
+    examples: [{word: '出かける', furigana: 'でかける', romaji: 'dekakeru', meaning: 'বাইরে যাওয়া'}, {word: '出口', furigana: 'でぐち', romaji: 'deguchi', meaning: 'বহির্গমন / Exit'}],
+    sentences: [{jp: '７時に家を出ます。', furi: 'しちじにいえをでます。', rom: 'Shichi-ji ni ie o demasu.', bn: 'আমি ৭ টায় বাড়ি থেকে বের হই।'}]
+  },
+  {
+    kanji: '夕', lesson: '2', meaning: 'সন্ধ্যা', strokes: 3, jlpt: 'N5', radical: '夕 (Evening)',
+    on: 'セキ (seki)', kun: 'ゆう (yū)', components: '夕 (সন্ধ্যা)',
+    story: 'চাঁদের কাঞ্জির (月) মতো দেখতে হলেও এর মাঝে একটি রেখা কম, যা দিগন্তে আংশিক ডুবে যাওয়া সন্ধ্যার চাঁদ প্রকাশ করে।',
+    examples: [{word: '夕方', furigana: 'ゆうがた', romaji: 'yūgata', meaning: 'সন্ধ্যাবেলা'}, {word: '夕食', furigana: 'ゆうしょく', romaji: 'yūshoku', meaning: 'রাতের খাবার'}],
+    sentences: [{jp: '夕方に雨が降りました。', furi: 'ゆうがたにあめがふりました。', rom: 'Yūgata ni amé ga furimashita.', bn: 'সন্ধ্যাবেলায় বৃষ্টি হয়েছিল।'}]
+  },
+  {
+    kanji: '方', lesson: '2', meaning: 'দিক / পদ্ধতি / ব্যক্তি / উপায়', strokes: 4, jlpt: 'N5', radical: '方 (Direction)',
+    on: 'ホウ (hō)', kun: 'かた (kata)', components: '方 (দিক)',
+    story: 'লাঙল বা কম্পাস নিয়ে নির্দিষ্ট একটি কোণ বা "দিক" বরাবর নিখুঁতভাবে এগিয়ে যাওয়ার চিত্র।',
+    examples: [{word: '夕方', furigana: 'ゆうがた', romaji: 'yūgata', meaning: 'সন্ধ্যাবেলা'}, {word: '読み方', furigana: 'よみかた', romaji: 'yomikata', meaning: 'পড়ার নিয়ম'}],
+    sentences: [{jp: 'この漢字の書き方を教えてください。', furi: 'このかんじのかきかたをおしえてください。', rom: 'Kono kanji no kakikata o oshiete kudasai.', bn: 'এই কাঞ্জিটি লেখার নিয়ম আমাকে শিখিয়ে দিন।'}]
+  },
+
+  // Climate & Seasons Focus (Lesson 3-4 Master System)
+  {
+    kanji: '季', lesson: '3', meaning: 'ঋতু / কাল', strokes: 8, jlpt: 'N4', radical: '子 (Child)',
+    on: 'キ (ki)', kun: '-', components: '禾 (শস্য) + 子 (শিশু/সন্তান)',
+    story: 'ঋতু পরিবর্তনের সাথে সাথে কচি শস্যের চারাগাছ যেভাবে মাঠে বেড়ে ওঠে।',
+    examples: [{word: '季節', furigana: 'きせつ', romaji: 'kisetsu', meaning: 'ঋতু / মরশুম'}],
+    sentences: [{jp: 'どの季節の一番好きですか？', furi: 'どのきせつがいちばんすきですか？', rom: 'Dono kisetsu ga ichiban suki desu ka?', bn: 'আপনার কোন ঋতুটি সবচেয়ে পছন্দ?'}]
+  },
+  {
+    kanji: '節', lesson: '3', meaning: 'গিঁট / অনুচ্ছেদ / উৎসব / সিজন', strokes: 13, jlpt: 'N4', radical: '竹 (Bamboo)',
+    on: 'セツ (setsu)', kun: 'ふし (fushi)', components: '竹 (বাঁশ) + 即',
+    story: 'বাঁশের ভেতরের শক্ত জয়েন্ট বা খাঁজকাটা অংশ যা বছরের নির্দিষ্ট সময় বা ঋতুর পরিবর্তনের মতো দৃশ্যমান।',
+    examples: [{word: '季節', furigana: 'きせつ', romaji: 'kisetsu', meaning: 'ঋতু / মরশুম'}, {word: '節約', furigana: 'せつやく', romaji: 'setsuyaku', meaning: 'অপচয় কমানো / সাশ্রয়'}],
+    sentences: [{jp: '日本の四季は美しいです。', furi: 'にほんのしきはうつくしいです。', rom: 'Nihon no shiki wa utsukushii desu.', bn: 'জাপানের চারটি ঋতুই চমৎকার।'}]
+  },
+  {
+    kanji: '花', lesson: '3', meaning: 'ফুল', strokes: 7, jlpt: 'N5', radical: '⺾ (Grass)',
+    on: 'カ (ka)', kun: 'はな (hana)', components: '⺾ (ঘাস) + 化 (পরিবর্তন)',
+    story: 'মাটির সবুজ ঘাস বা উদ্ভিদ যখন সময়ের সাথে পরিবর্তিত হয়ে একটি সুন্দর রঙ-বেরঙের "ফুলে" রূপ নেয়।',
+    examples: [{word: '花火', furigana: 'はなび', romaji: 'hanabi', meaning: 'আতশবাজি'}, {word: '花見', furigana: 'はなみ', romaji: 'hanami', meaning: 'চেরি ফুল দেখা'}],
+    sentences: [{jp: '庭に綺麗な花が咲きました。', furi: 'にわにきれいなはながさきました。', rom: 'Niwa ni kirei na hana ga sakimashita.', bn: 'বাগানে সুন্দর ফুল ফুটেছে।'}]
+  },
+  {
+    kanji: '春', lesson: '3', meaning: 'বসন্তকাল', strokes: 9, jlpt: 'N5', radical: '日 (Sun)',
+    on: 'シュン (shun)', kun: 'はる (haru)', components: '三 + 人 + 日 (সূর্য)',
+    story: 'তিনজন মানুষ একসাথে উষ্ণ সূর্যের নিচে এসে আনন্দ করছে কারণ দীর্ঘ শীতের পর "বসন্ত" এসেছে।',
+    examples: [{word: '春休み', furigana: 'はるやすみ', romaji: 'haruyasumi', meaning: 'বসন্তকালীন ছুটি'}, {word: '青春', furigana: 'せいしゅん', romaji: 'seishun', meaning: 'যৌবন / তারুণ্য'}],
+    sentences: [{jp: '春には桜が咲きます。', furi: 'はるにはさくらがさきます。', rom: 'Haru ni wa sakura ga sakimar.', bn: 'বসন্তে সাকুরা ফুল ফোটে।'}]
+  },
+  {
+    kanji: '同', lesson: '3', meaning: 'একই / সমমান', strokes: 6, jlpt: 'N5', radical: '口 (Mouth)',
+    on: 'ドウ (dō)', kun: 'おな.じ (ona.ji)', components: '冂 + 一 + 口 (মুখ)',
+    story: 'একটি বড় হলের নিচে সবাই এক মুখে একই সুরে কথা বলছে—সবাই "একই" বা একমত।',
+    examples: [{word: '同じ', furigana: 'おなじ', romaji: 'onaji', meaning: 'একই'}, {word: '同時に', furigana: 'どうじに', romaji: 'dōji ni', meaning: 'একই সময়ে'}],
+    sentences: [{jp: '彼と私は同じ年です。', furi: 'かれとわたしはおなじとしです。', rom: 'Kare to watashi wa onaji toshi desu.', bn: 'সে এবং আমি একই বয়সের।'}]
+  },
+  {
+    kanji: '夏', lesson: '3', meaning: 'গ্রীষ্মকাল / গরমের কাল', strokes: 10, jlpt: 'N5', radical: '夂 (Go)',
+    on: 'カ (ka)', kun: 'なつ (natsu)', components: '夏 (গ্রীষ্মকাল)',
+    story: 'গ্রীষ্মের প্রচণ্ড গরমে মাথায় টুপি পরে ধীর পায়ে মানুষ রাস্তার দিকে হেঁটে যাচ্ছে।',
+    examples: [{word: '夏休み', furigana: 'なつやすみ', romaji: 'natsuyasumi', meaning: 'গ্রীষ্মের ছুটি'}, {word: '夏祭り', furigana: 'なつまつり', romaji: 'natsumatsuri', meaning: 'গ্রীষ্মকালীন উৎসব'}],
+    sentences: [{jp: '日本の夏はとても暑いです。', furi: 'にほんのなつはとてもあついです。', rom: 'Nihon no natsu wa totemo atsui desu.', bn: 'জাপানের গ্রীষ্মকাল অনেক গরম।'}]
+  },
+  {
+    kanji: '暑', lesson: '3', meaning: 'গরম (আবহাওয়া)', strokes: 12, jlpt: 'N5', radical: '日 (Sun)',
+    on: 'ショ (sho)', kun: 'あつ.い (atsu.i)', components: '日 (সূর্য) + 者 (ব্যক্তি)',
+    story: 'সূর্যের তীব্র আলো মাথার উপর পড়ায় চারদিকের আবহাওয়া প্রচণ্ড "গরম" হয়ে উঠেছে।',
+    examples: [{word: '暑い', furigana: 'あつい', romaji: 'atsui', meaning: 'গরম (আবহাওয়া)'}, {word: '残暑', furigana: 'ざんしょ', romaji: 'zansho', meaning: 'গ্রীষ্মের শেষভাগের গরম'}],
+    sentences: [{jp: '今日は昨日より暑いですね。', furi: 'きょうはきのうよりあついですね。', rom: 'Kyō wa kinō yori atsui desu ne.', bn: 'আজ গতকালের চেয়েও গরম, তাই না?'}]
+  },
+  {
+    kanji: '秋', lesson: '3', meaning: 'শরৎকাল', strokes: 9, jlpt: 'N5', radical: '禾 (Grain)',
+    on: 'シュウ (shū)', kun: 'あき (aki)', components: '禾 (শস্য) + 火 (আগুন)',
+    story: 'শরৎকালে ক্ষেতের পাকা ধান বা শস্য যখন আগুনের মতো সোনালী রঙ ধারণ করে, তখন ফসল কাটার সময় হয়।',
+    examples: [{word: '秋葉原', furigana: 'あきはばら', romaji: 'akihabara', meaning: 'আকিহাবারা (ইলেকট্রনিক্স জোন)'}, {word: '秋分', furigana: 'しゅうぶん', romaji: 'shūbun', meaning: 'জলবিষুব / শরৎকালের দিন-রাত্রি সমান হওয়ার দিন'}],
+    sentences: [{jp: '秋の紅葉は素晴らしいです。', furi: 'あきのこうようはすばらしいです。', rom: 'Aki no kōyō wa subarashii desu.', bn: 'শরতের লাল পাতার দৃশ্য অসাধারণ।'}]
+  },
+  {
+    kanji: '寒', lesson: '3', meaning: 'ঠান্ডা (আবহাওয়া)', strokes: 12, jlpt: 'N5', radical: '宀 (Roof)',
+    on: 'カン (kan)', kun: 'さむ.い (samu.i)', components: '宀 (ছাদ) + 🧊 বরফের টুকরো',
+    story: 'ঘরের ছাদের নিচে কম্বল মুড়ি দিয়ে থাকার পরও বরফের ঠান্ডায় শরীর কাঁপছে—এটিই "শীত" বা ঠান্ডা।',
+    examples: [{word: '寒い', furigana: 'さむい', romaji: 'samui', meaning: 'ঠান্ডা (আবহাওয়া)'}, {word: '寒波', furigana: 'かんぱ', romaji: 'kanpa', meaning: 'শৈত্যপ্রবাহ'}],
+    sentences: [{jp: '部屋が少し寒いです。', furi: 'へやがすこしさむいです。', rom: 'Heya ga sukoshi samui desu.', bn: 'রুমটি কিছুটা ঠান্ডা।'}]
+  },
+  {
+    kanji: '冬', lesson: '3', meaning: 'শীতকাল', strokes: 5, jlpt: 'N5', radical: '夂 (Go/Winter)',
+    on: 'トウ (tō)', kun: 'ふゆ (fuyu)', components: '夂 + 冫 (বরফের ফোঁটা)',
+    story: 'বছরের শেষ ভাগে ধীর পায়ে যখন বরফের দুটি ফোঁটা নিয়ে শীতকাল হাজির হয়।',
+    examples: [{word: '冬休み', furigana: 'ふゆやすみ', romaji: 'fuyuyasumi', meaning: 'শীতকালীন ছুটি'}, {word: '冬物', furigana: 'ふゆもの', romaji: 'fuyumono', meaning: 'শীতের পোশাক'}],
+    sentences: [{jp: '冬には雪が降ります。', furi: 'ふゆにはゆきがふります。', rom: 'Fuyu ni wa yuki ga furimasu.', bn: 'শীতকালে বরফ পড়ে।'}]
+  },
+  {
+    kanji: '天', lesson: '4', meaning: 'আকাশ / স্বর্গ / স্বর্গীয়', strokes: 4, jlpt: 'N5', radical: '大 (Large)',
+    on: 'テン (ten)', kun: 'あめ / あま (ame / ama)', components: '一 + 大 (বিশাল মানুষ)',
+    story: 'একজন বিশাল মানুষ দুই হাত ছড়িয়ে দাঁড়িয়ে আছে, তার মাথার অনেক উপরে যে অসীম শূন্যতা—তা-ই আকাশ।',
+    examples: [{word: '天気', furigana: 'てんき', romaji: 'tenki', meaning: 'আবহাওয়া'}, {word: '天才', furigana: 'てんさい', romaji: 'tensai', meaning: 'প্রতিভাবান / জিনিয়াস'}],
+    sentences: [{jp: '明日の天気はどうですか？', furi: 'あしたのてんきはどうですか？', rom: 'Ashita no tenki wa dō desu ka?', bn: 'আগামীকালের আবহাওয়া কেমন?'}]
+  },
+  {
+    kanji: '晴', lesson: '4', meaning: 'রৌদ্রোজ্জ্বল / পরিষ্কার আকাশ', strokes: 12, jlpt: 'N5', radical: '日 (Sun)',
+    on: 'セイ (sei)', kun: 'は.れ / は.れる (ha.re / ha.reru)', components: '日 (সূর্য) + 青 (নীল/পরিষ্কার)',
+    story: 'আকাশে উজ্জ্বল সূর্য ওঠার পর চারদিকের নীল আকাশ যখন মেঘমুক্ত ও চমৎকার পরিষ্কার দেখায়।',
+    examples: [{word: '晴れ', furigana: 'はれ', romaji: 'hare', meaning: 'পরিষ্কার রোদ'}, {word: '晴天', furigana: 'せいてん', romaji: 'seiten', meaning: 'মেঘমুক্ত রৌদ্রোজ্জ্বল আকাশ'}],
+    sentences: [{jp: '今日は晴れました。', furi: 'きょうははれました。', rom: 'Kyō wa haremashita.', bn: 'আজ রোদ উঠেছে।'}]
+  },
+  {
+    kanji: '昨', lesson: '4', meaning: 'অতীত / গত (দিন/বছর)', strokes: 9, jlpt: 'N5', radical: '日 (Sun)',
+    on: 'サク (saku)', kun: 'きのう (kinō)', components: '日 (সূর্য) + 乍',
+    story: 'যে সূর্যটি ইতিমধ্যে দিগন্তে অস্ত চলে গেছে অর্থাৎ "গত" হয়ে গেছে।',
+    examples: [{word: '昨日', furigana: 'きのう', romaji: 'kinō', meaning: 'গতকাল'}, {word: '昨年', furigana: 'さくねん', romaji: 'sakunen', meaning: 'গত বছর'}],
+    sentences: [{jp: '昨日は雨でした。', furi: 'きのうはあめでした。', rom: 'Kinō wa ame deshita.', bn: 'গতকাল বৃষ্টি ছিল।'}]
+  },
+  {
+    kanji: '雨', lesson: '4', meaning: 'বৃষ্টি', strokes: 8, jlpt: 'N5', radical: '雨 (Rain)',
+    on: 'ウ (u)', kun: 'あめ (ame)', components: '雨 (আকাশ থেকে পড়া পানির ফোঁটা)',
+    story: 'জানালার কাচ বা মেঘের খাঁজ দিয়ে আকাশ থেকে টপটপ করে চার ফোঁটা "বৃষ্টি" মাটিতে পড়ছে।',
+    examples: [{word: '大雨', furigana: 'おおあめ', romaji: 'ooame', meaning: 'ভারী বর্ষণ'}, {word: '雨傘', furigana: 'あまがさ', romaji: 'amagasa', meaning: 'বৃষ্টির ছাতা'}],
+    sentences: [{jp: '雨が降っています。', furi: 'あめがふっています。', rom: 'Ame ga futteimasu.', bn: 'বৃষ্টি পড়ছে।'}]
+  },
+  {
+    kanji: '明', lesson: '4', meaning: 'উজ্জ্বল / পরিষ্কার / আগামী', strokes: 8, jlpt: 'N5', radical: '日 (Sun)',
+    on: 'メイ / ミョウ (mei / myō)', kun: 'あか.るい / あした (aka.rui / ashita)', components: '日 (সূর্য) + 月 (চাঁদ)',
+    story: 'মহাবিশ্বের দুই সবচেয়ে বড় আলোর উৎস সূর্য এবং চাঁদ যখন একসাথে থাকে, তখন চারদিক "উজ্জ্বল" দেখায়।',
+    examples: [{word: '明日', furigana: 'あした', romaji: 'ashita', meaning: 'আগামীকাল'}, {word: '明るい', furigana: 'あかるい', romaji: 'akarui', meaning: 'উজ্জ্বল / আলোময়'}],
+    sentences: [{jp: '明日、友達に会います।', furi: 'あした、ともだちにあいます。', rom: 'Ashita, tomodachi ni aimasu.', bn: 'আগামীকাল আমি বন্ধুর সাথে দেখা করব।'}]
+  },
+  {
+    kanji: '雪', lesson: '4', meaning: 'বরফ / তুষার', strokes: 11, jlpt: 'N5', radical: '雨 (Rain)',
+    on: 'セツ (setsu)', kun: 'ゆき (yuki)', components: '雨 (বৃষ্টি) + ヨ (হাত)',
+    story: 'আকাশ থেকে যখন বৃষ্টির ফোঁটা জমে পেঁজা তুলোর মতো পড়ে যা হাত দিয়ে ধরা যায়—তা-ই তুষার বা বরফ।',
+    examples: [{word: '大雪', furigana: 'おおゆき', romaji: 'ooyuki', meaning: 'ভারী তুষারপাত'}, {word: '雪祭り', furigana: 'ゆきまつり', romaji: 'yukimatsuri', meaning: 'তুষার উৎসব'}],
+    sentences: [{jp: '外は雪が積もっています。', furi: 'そとはゆきがつもっています。', rom: 'Soto wa yuki ga tsumotteimasu.', bn: 'বাইরে বরফ জমে আছে।'}]
+  },
+  {
+    kanji: '毎', lesson: '4', meaning: 'প্রতি / প্রত্যেক', strokes: 6, jlpt: 'N5', radical: '毋 (Mother)',
+    on: 'マイ (mai)', kun: 'ごと (goto)', components: '毎 (প্রতি)',
+    story: 'একজন মা যেভাবে "প্রতিদিন" তার চুল বেঁধে সন্তানের যত্ন নেন, এটি সেই দায়িত্বশীলতার প্রতীক।',
+    examples: [{word: '毎日', furigana: 'まいにち', romaji: 'mainichi', meaning: 'প্রতিদিন'}, {word: '毎月', furigana: 'まいつき', romaji: 'প্রতি মাস'}],
+    sentences: [{jp: '毎日日本語を練習します。', furi: 'まいにちにほんごをれんしゅうします。', rom: 'Mainichi nihongo o renshū shimasu.', bn: 'আমি প্রতিদিন জাপানি ভাষা প্র্যাকটিস করি।'}]
+  },
+  {
+    kanji: '風', lesson: '4', meaning: 'বাতাস / স্টাইল / ফ্লু', strokes: 9, jlpt: 'N5', radical: '風 (Wind)',
+    on: 'フウ (fū)', kun: 'かぜ (kaze)', components: '几 + 𠂉 + 虫 (পোকা)',
+    story: 'ঝড়ের বা তীব্র বাতাসের ঝাপটায় যখন চারদিকের ধুলোবালি ও ছোট পোকা উড়ে যায়।',
+    examples: [{word: '台風', furigana: 'たいふう', romaji: 'taifuu', meaning: 'টাইফুন / ঘূর্ণিঝড়'}, {word: '風邪', furigana: 'かぜ', romaji: 'kaze', meaning: 'ঠান্ডা লাগা / সর্দি'}],
+    sentences: [{jp: '強い風が吹いています。', furi: 'つよいかぜがふいています。', rom: 'Tsuyoi kaze ga fuiteimasu.', bn: 'তীব্র বাতাস বইছে।'}]
+  },
+  {
+    kanji: '強', lesson: '4', meaning: 'শক্তিশালী / জোর করা', strokes: 11, jlpt: 'N5', radical: '弓 (Bow)',
+    on: 'キョウ (kyō)', kun: 'つよ.い (tsuyo.i)', components: '弓 (ধনুক) + 厶 + 虫 (পোকা)',
+    story: 'একটি বড় ধনুক টেনে পোকার মতো শক্ত খোলস বিশিষ্ট লক্ষ্যবস্তু ভেদ করার জন্য "শক্তিশালী" বল প্রয়োজন।',
+    examples: [{word: '強い', furigana: 'つよい', romaji: 'tsuyoi', meaning: 'শক্তিশালী'}, {word: '勉強する', furigana: 'べんきょうする', romaji: 'benkyōsuru', meaning: 'পড়াশোনা করা'}],
+    sentences: [{jp: '彼は力が強いです。', furi: 'かれはちからがつよいです。', rom: 'Kare wa chikara ga tsuyoi desu.', bn: 'তার গায়ের শক্তি অনেক বেশি।'}]
+  },
+
+  // Logistics, Cities & Transportation (Lessons 5-7 Advance Layout)
+  {
+    kanji: '町', lesson: '5', meaning: 'শহর / মহল্লা / টাউন', strokes: 7, jlpt: 'N5', radical: '田 (Rice field)',
+    on: 'チョウ (chō)', kun: 'まち (machi)', components: '田 (ক্ষেত) + 丁 (রাস্তার মোড়/টি-জংশন)',
+    story: 'ধানক্ষেতের পাশে যেখানে পাকা রাস্তার মোড় বা টি-জংশন তৈরি হয়ে জনবসতি গড়ে উঠেছে—তা-ই শহর।',
+    examples: [{word: '下町', furigana: 'したまち', romaji: 'shitamachi', meaning: 'ডাউনটাউন / পুরনো শহর'}, {word: '町長', furigana: 'ちょうちょう', romaji: 'chōchō', meaning: 'মেয়র'}],
+    sentences: [{jp: 'この町は静かです。', furi: 'このまちはしずかです。', rom: 'Kono machi wa shizuka desu.', bn: 'এই শহরটি খুব শান্ত।'}]
+  },
+  {
+    kanji: '静', lesson: '5', meaning: 'শান্ত / নীরব', strokes: 14, jlpt: 'N4', radical: '青 (Blue)',
+    on: 'セイ (sei)', kun: 'しず.か (shizu.ka)', components: '青 (নীল) + 争 (দ্বন্দ)',
+    story: 'সমস্ত দ্বন্দ বা কোলাহল শেষ হওয়ার পর নীল আকাশের মতো শান্ত ও "নীরব" পরিবেশ।',
+    examples: [{word: '静か（な）', furigana: 'しずか（な）', romaji: 'shizuka', meaning: 'শান্ত'}, {word: '静止', furigana: 'せいし', romaji: 'seishi', meaning: 'স্থির অবস্থা'}],
+    sentences: [{jp: '図書館の中は静かです。', furi: 'としょかんのなかはしずかです。', rom: 'Toshokan no naka wa shizuka desu.', bn: 'গ্রন্থাগারের ভেতরটা একদম নীরব।'}]
+  },
+  {
+    kanji: '店', lesson: '5', meaning: 'দোকান / শপ', strokes: 8, jlpt: 'N5', radical: '广 (Building)',
+    on: 'テン (ten)', kun: 'みせ (mise)', components: '广 (ছাদ) + 占 (ভবিষ্যদ্বাণী/দখল করা)',
+    story: 'একটি বড় ছাদের নিচে মালামাল সাজিয়ে জায়গা দখল করে যেখানে ব্যবসা করা হয়—সেটি দোকান।',
+    examples: [{word: '店員', furigana: 'てんいん', romaji: 'ten-in', meaning: 'দোকানের কর্মচারী'}, {word: '書店', furigana: 'しょてん', romaji: 'shoten', meaning: 'বইয়ের দোকান'}],
+    sentences: [{jp: 'あの店で服を買いました。', furi: 'あのみせでふくをかいました。', rom: 'Ano mise de fuku o kaimashita.', bn: 'ঐ দোকান থেকে আমি জামা কিনেছি।'}]
+  },
+  {
+    kanji: '堂', lesson: '5', meaning: 'হল / বিশাল ভবন / মন্দির কক্ষ', strokes: 11, jlpt: 'N4', radical: '土 (Earth)',
+    on: 'ドウ (dō)', kun: '-', components: '堂 (ভবন)',
+    story: 'মাটির উপর উঁচুতে নির্মিত একটি বিশাল ঐতিহ্যবাহী হলরুম বা সামাজিক সেন্টার।',
+    examples: [{word: '食堂', furigana: 'しょくどう', romaji: 'shokudō', meaning: 'ক্যান্টিন / খাবার জায়গা'}, {word: '本堂', furigana: 'ほんどう', romaji: 'hondō', meaning: 'মূল মন্দির ভবন'}],
+    sentences: [{jp: '大学の食堂は安いです。', furi: 'だいがくのしょくどうはやすいです。', rom: 'Daigaku no shokudō wa yasui desu.', bn: 'বিশ্ববিদ্যালয়ের ক্যান্টিনের খাবারের দাম কম।'}]
+  },
+  {
+    kanji: '多', lesson: '5', meaning: 'অনেক / প্রচুর', strokes: 6, jlpt: 'N5', radical: '夕 (Evening)',
+    on: 'タ (ta)', kun: 'おお.い (oo.i)', components: '夕 + 夕 (সন্ধ্যা + সন্ধ্যা)',
+    story: 'একটার পর একটা অনেকগুলো সন্ধ্যা পার হয়ে যাওয়া অর্থাৎ প্রচুর বা "অনেক" দিন অতিবাহিত হওয়া।',
+    examples: [{word: '多い', furigana: 'おおい', romaji: 'ooi', meaning: 'অনেক'}, {word: '多分', furigana: 'たぶん', romaji: 'tabun', meaning: 'সম্ভবত'}],
+    sentences: [{jp: 'この街には外国人が多いです。', furi: 'このまちにはがいこくじんがおおいです。', rom: 'Kono machi ni wa gaikokujin ga ooi desu.', bn: 'এই শহরে অনেক বিদেশী মানুষ আছে।'}]
+  },
+  {
+    kanji: '便', lesson: '5', meaning: 'সুবিধা / চিঠি / ফ্লাইট / মলত্যাগ', strokes: 9, jlpt: 'N4', radical: '人 (Human)',
+    on: 'ベン / ビン (ben / bin)', kun: 'たよ.り (tayo.ri)', components: '人 (মানুষ) + 更 (পরিবর্তন)',
+    story: 'মানুষ যখন নিজের অবস্থা পরিবর্তনের জন্য সহজ ও আরামদায়ক কোনো মাধ্যম বা "সুবিধা" খুঁজে নেয়।',
+    examples: [{word: '便利（な）', furigana: 'べんり', romaji: 'benri', meaning: 'সুবিধাজনক'}, {word: '郵便局', furigana: 'ゆうびんきょく', romaji: 'yūbinkyoku', meaning: 'পোস্ট অফিস'}],
+    sentences: [{jp: '駅の近くは便利です。', furi: 'えきのちかくはべんりです。', rom: 'Eki no chikaku wa benri desu.', bn: 'স্টেশনের কাছাকাছি এলাকা অনেক সুবিধাজনক।'}]
+  },
+  {
+    kanji: '利', lesson: '5', meaning: 'লাভ / সুবিধা / ধারালো', strokes: 7, jlpt: 'N4', radical: '刀 (Knife)',
+    on: 'リ (ri)', kun: 'き.く (ki.ku)', components: '禾 (শস্য) + 刀 (ছুরি)',
+    story: 'ধারালো ছুরি দিয়ে পাকা শস্য কেটে ঘরে তোলার মাধ্যমে কৃষক চমৎকার মুনাফা বা "লাভ" করে।',
+    examples: [{word: '便利', furigana: 'べんり', romaji: 'benri', meaning: 'সুবিধাজনক'}, {word: '利用する', furigana: 'りようする', romaji: 'riyōsuru', meaning: 'ব্যবহার করা / সুবিধা নেওয়া'}],
+    sentences: [{jp: 'このアプリは利用しやすいです。', furi: 'このあぷりはりようしやすいです。', rom: 'Kono apuri wa riyō shiyasui desu.', bn: 'এই অ্যাপটি ব্যবহার করা বেশ সহজ।'}]
+  },
+  {
+    kanji: '少', lesson: '5', meaning: 'অল্প / সামান্য', strokes: 4, jlpt: 'N5', radical: '小 (Small)',
+    on: 'ショウ (shō)', kun: 'すく.ない / すこ.し (suku.nai / suko.shi)', components: '小 (ছোট) + ノ (নিচের দাগ)',
+    story: 'এমনিতেই ছোট জিনিস, তার নিচ থেকে কেটে আরও এক টুকরো সরিয়ে নিলে তা পরিমাণে একদম "অল্প" হয়ে যায়।',
+    examples: [{word: '少し', furigana: 'すこし', romaji: 'sukoshi', meaning: 'একটু / সামান্য'}, {word: '少ない', furigana: 'すくない', romaji: 'sukunai', meaning: 'কম সংখ্যক'}],
+    sentences: [{jp: '砂糖を少し入れてください。', furi: 'さとうをすこしいれてください。', rom: 'Satō o sukoshi irete kudasai.', bn: 'অনুগ্রহ করে একটু চিনি দিন।'}]
+  },
+  {
+    kanji: '不', lesson: '5', meaning: 'না / নেতিবাচক / অ-', strokes: 4, jlpt: 'N4', radical: '一 (One)',
+    on: 'フ / ブ (fu / bu)', kun: '-', components: '不 (নেতিবাচক)',
+    story: 'একটি চারা গাছ সোজা আকাশের দিকে বাড়তে গিয়ে উপরে বাধা পেয়ে আটকে যাওয়ার নেতিবাচক রূপ।',
+    examples: [{word: '不便', furigana: 'ふべん', romaji: 'fuben', meaning: 'অসুবিধাজনক'}, {word: '不安', furigana: 'ふあん', romaji: 'fuan', meaning: 'চিন্তিত / উদ্বিগ্ন'}],
+    sentences: [{jp: 'バスが来ないと不便です。', furi: 'ばすがこないとふべんです。', rom: 'Basu ga konai to fuben desu.', bn: 'বাস না আসলে বেশ অসুবিধা হয়।'}]
+  },
+  {
+    kanji: '遠', lesson: '5', meaning: 'দূরে / দূরবর্তী', strokes: 13, jlpt: 'N4', radical: '⻌ (Walk)',
+    on: 'エン (en)', kun: 'とお.い (too.i)', components: '⻌ (চলা) + 袁 (লম্বা পোশাক)',
+    story: 'লম্বা আলখাল্লা বা পোশাক পরে দীর্ঘ রাস্তা পায়ে হেঁটে অনেক "দূরে" চলে যাওয়ার দৃশ্য।',
+    examples: [{word: '遠い', furigana: 'とおい', romaji: 'tooi', meaning: 'দূরে'}, {word: '遠足', furigana: 'えんそく', romaji: 'ensoku', meaning: 'শিক্ষা সফর / পিকনিক'}],
+    sentences: [{jp: '私の学校は家から遠いです。', furi: 'わたしのがくこうはいえからとおいです。', rom: 'Watashi no gakkō wa ie kara tooi desu.', bn: 'আমার স্কুল বাড়ি থেকে অনেক দূরে।'}]
+  },
+  {
+    kanji: '道', lesson: '6', meaning: 'রাস্তা / পথ / নৈতিক পদ্ধতি', strokes: 12, jlpt: 'N5', radical: '⻌ (Walk)',
+    on: 'ドウ (dō)', kun: 'みち (michi)', components: '⻌ (চলা) + 首 (মাথা/প্রধান)',
+    story: 'নেতা বা প্রধান মানুষটি মাথা উঁচু করে যে নির্দিষ্ট গন্তব্য বরাবর হেঁটে পথ দেখান—তা-ই রাস্তা।',
+    examples: [{word: '水道', furigana: 'すいどう', romaji: 'suidō', meaning: 'পানির পাইপ'}, {word: '車道', furigana: 'しゃどう', romaji: 'shadō', meaning: 'গাড়ির রাস্তা'}],
+    sentences: [{jp: '道をまっすぐ行ってください。', furi: 'みちをまっすぐいってください。', rom: 'Michi o massugu itte kudasai.', bn: 'রাস্তা দিয়ে সোজা এগিয়ে যান।'}]
+  },
+  {
+    kanji: '右', lesson: '6', meaning: 'ডান / ডানদিক', strokes: 5, jlpt: 'N5', radical: '口 (Mouth)',
+    on: 'ウ / ユウ (u / yū)', kun: 'みぎ (migi)', components: 'ナ (হাত) + 口 (মুখ)',
+    story: 'খাবার সময় ডান হাত দিয়ে মুখের ভেতর লোকমা বা খাবার তুলে নেওয়ার দৃশ্য = ডান দিক।',
+    examples: [{word: '右側', furigana: 'みぎがわ', romaji: 'migigawa', meaning: 'ডান পাশ'}, {word: '右手', furigana: 'みぎて', romaji: 'migi-te', meaning: 'ডান হাত'}],
+    sentences: [{jp: '次の交差点を右に曲がります。', furi: 'つぎのこうさてんをみぎにまがります。', rom: 'Tsugi no kōsaten o migi ni magarimasu.', bn: 'পরের মোড় থেকে ডান দিকে ঘুরবেন।'}]
+  },
+  {
+    kanji: '公', lesson: '6', meaning: 'সরকারি / পাবলিক / উন্মুক্ত', strokes: 4, jlpt: 'N4', radical: '八 (Eight)',
+    on: 'コウ (kō)', kun: 'おおやけ (ooyake)', components: '八 (ভাগ করা) + 厶 (ব্যক্তিগত)',
+    story: 'ব্যক্তিগত সীমানা তুলে দিয়ে কোনো জায়গা যখন আট ভাগের মতো সবার জন্য উন্মুক্ত বা পাবলিক করা হয়।',
+    examples: [{word: '公園', furigana: 'こうえん', romaji: 'kōen', meaning: 'পার্ক / উদ্যান'}, {word: '公務員', furigana: 'こうむいん', romaji: 'kōmuin', meaning: 'সরকারি চাকরিজীবী'}],
+    sentences: [{jp: '公園で散歩しましょう。', furi: 'こうえんでさんぽしましょう。', rom: 'Kōen de sanpo shimashō.', bn: 'চলুন পার্কে একটু হেঁটে আসি।'}]
+  },
+  {
+    kanji: '園', lesson: '6', meaning: 'বাগান / পার্ক / জোন', strokes: 13, jlpt: 'N4', radical: '囗 (Enclosure)',
+    on: 'エン (en)', kun: 'その (sono)', components: '囗 (সীমানা) + 袁 (লম্বা আলখাল্লা)',
+    story: 'একটি দেয়াল ঘেরা সুন্দর সুরক্ষিত সবুজ সীমানার ভেতর মানুষ যেখানে অবসর সময়ে ঘুরে বেড়ায়—সেটি বাগান।',
+    examples: [{word: '公園', furigana: 'こうえん', romaji: 'kōen', meaning: 'পার্ক'}, {word: '動物園', furigana: 'どうぶつえん', romaji: 'dōbutsuen', meaning: 'চিড়িয়াখানা'}],
+    sentences: [{jp: '動物園に行きたいです。', furi: 'どうぶつえんにいきたいです。', rom: 'Dōbutsuen ni ikitai desu.', bn: 'আমি চিড়িয়াখানায় যেতে চাই।'}]
+  },
+  {
+    kanji: '左', lesson: '6', meaning: 'বাম / বামদিক', strokes: 5, jlpt: 'N5', radical: 'エ (Work)',
+    on: 'サ (sa)', kun: 'ひだり (hidari)', components: 'ナ (হাত) + エ (কাজ করার টুল)',
+    story: 'ডান হাতে খাওয়ার সময় বাম হাত দিয়ে কাজের টুল শক্ত করে ধরে রাখার পজিশন = বাম দিক।',
+    examples: [{word: '左側', furigana: 'ひだりがわ', romaji: 'hidarigawa', meaning: 'বাম পাশ'}, {word: '左利き', furigana: 'ひだりきき', romaji: 'hidarikiki', meaning: 'বাঁহাতি'}],
+    sentences: [{jp: 'そのビルは左にあります。', furi: 'そのびるはひだりにあります。', rom: 'Sono biru wa hidari ni arimasu.', bn: 'ঐ বিল্ডিংটি বাম পাশে অবস্থিত।'}]
+  },
+  {
+    kanji: '銀', lesson: '6', meaning: 'রূপা / সিলভার', strokes: 14, jlpt: 'N5', radical: '金 (Gold/Metal)',
+    on: 'ギン (gin)', kun: '-', components: '金 (ধাতু) + 艮 (স্থির/ভালো)',
+    story: 'সোনার পরেই যে মূল্যবান চকচকে স্থায়ী ধাতুটিকে মানুষ সবচেয়ে ভালো আকৃতিতে সংরক্ষণ করে—তা রূপা।',
+    examples: [{word: '銀行', furigana: 'ぎんこう', romaji: 'ginkō', meaning: 'ব্যাংক'}, {word: '銀世界', furigana: 'ぎんせかい', romaji: 'ginsekai', meaning: 'তুষারাবৃত সাদা পৃথিবী'}],
+    sentences: [{jp: '銀行でお金を下ろします。', furi: 'ぎんこうでおかねをおろします。', rom: 'Ginkō de okane o oroshimasu.', bn: 'আমি ব্যাংক থেকে টাকা তুলবো।'}]
+  },
+  {
+    kanji: '行', lesson: '6', meaning: 'যাওয়া / লাইন / পরিচালনা', strokes: 6, jlpt: 'N5', radical: '行 (Go)',
+    on: 'コウ / ギョウ (kō / gyō)', kun: 'い.く / おこな.う (i.ku / okona.u)', components: '行 (রাস্তার চার মোড়)',
+    story: 'রাস্তার চার মাথার ক্রসরোডের চিত্র, যেখান দিয়ে মানুষ নির্দিষ্ট গন্তব্যের দিকে হেঁটে চলে যায়।',
+    examples: [{word: '行きます', furigana: 'いきます', romaji: 'ikimasu', meaning: 'যাওয়া'}, {word: '銀行', furigana: 'ぎんこう', romaji: 'ginkō', meaning: 'ব্যাংক'}],
+    sentences: [{jp: 'デパートへ行きます。', furi: 'でぱーとへいきます。', rom: 'Depāto he ikimasu.', bn: 'আমি ডিপার্টমেন্টাল স্টোরে যাচ্ছি।'}]
+  },
+  {
+    kanji: '近', lesson: '6', meaning: 'কাছে / নিকটবর্তী', strokes: 7, jlpt: 'N5', radical: '⻌ (Walk)',
+    on: 'キン (kin)', kun: 'ちか.く / ちか.い (chika.ku / chika.i)', components: '⻌ (চলা) + 斤 (কুঠার)',
+    story: 'হাতে কুঠার নিয়ে বনের কাছাকাছি দূরত্বের কোনো গাছে আঘাত করার সহজ অ্যাক্সেস এলাকা।',
+    examples: [{word: '近く', furigana: 'ちかく', romaji: 'chikaku', meaning: 'নিকটে / পাশে'}, {word: '近所', furigana: 'きんじょ', romaji: 'kinjo', meaning: 'প্রতিবেশ / আশেপাশের এলাকা'}],
+    sentences: [{jp: '駅の近くに美味しい店があります。', furi: 'えきのちかくにおいしみせがあります。', rom: 'Eki no chikaku ni oishii mise ga arimasu.', bn: 'স্টেশনের কাছে একটি চমৎকার খাবারের দোকান আছে।'}]
+  },
+  {
+    kanji: '車', lesson: '6', meaning: 'গাড়ি / চাকা / যানবাহন', strokes: 7, jlpt: 'N5', radical: '車 (Cart)',
+    on: 'シャ (sha)', kun: 'くるま (くるま)', components: '車 (রথ)',
+    story: 'প্রাচীন রাজকীয় যুদ্ধরথের উপর থেকে দেখা চিত্র; মাঝে বসার মূল চেসিস এবং দুপাশে চাকা।',
+    examples: [{word: '電車', furigana: 'でんしゃ', romaji: 'densha', meaning: 'বৈদ্যুতিক ট্রেন'}, {word: '自動車', furigana: 'じどうしゃ', romaji: 'jidōsha', meaning: 'মোটরগাড়ি'}],
+    sentences: [{jp: '車を運転することができますか？', furi: 'くるまをうんてんすることができますか？', rom: 'Kuruma o unten suru koto ga dekimasu ka?', bn: 'আপনি কি গাড়ি চালাতে পারেন?'}]
+  },
+  {
+    kanji: '神', lesson: '6', meaning: 'ঈশ্বর / দেবতা / অলৌকিক', strokes: 9, jlpt: 'N4', radical: '⺭ (Show/Alt)',
+    on: 'シン / ジン (shin / jin)', kun: 'かみ (kami)', components: '⺭ (বেদী/প্রার্থনা) + 申 (বলা/বজ্রপাত)',
+    story: 'পবিত্র বেদীর সামনে দাঁড়িয়ে অলৌকিক দৈব শক্তির উদ্দেশ্যে নিজের মনের কথা বা প্রার্থনা জানানো।',
+    examples: [{word: '神社', furigana: 'じんじゃ', romaji: 'jinja', meaning: 'শিন্তো উপাসনালয় / মঠ'}, {word: '神様', furigana: 'かみさま', romaji: 'kamisama', meaning: 'ভগবান / ঈশ্বর'}],
+    sentences: [{jp: 'お正月に神社へ行きました。', furi: 'おしょうがつにじんじゃへいきました。', rom: 'O-shōgatsu ni jinja he ikimashita.', bn: 'নতুন বছরের শুরুতে আমি শিন্তো মঠে গিয়েছিলাম।'}]
+  },
+  {
+    kanji: '社', lesson: '6', meaning: 'কোম্পানি / সমাজ / মঠ', strokes: 7, jlpt: 'N5', radical: '⺭ (Show/Alt)',
+    on: 'シャ (sha)', kun: 'やしろ (yashiro)', components: '⺭ (বেদী) + 土 (মাটি)',
+    story: 'একটি নির্দিষ্ট ভূমির উপর যখন মানুষ সমাজ বা প্রাতিষ্ঠানিক গ্রুপ গঠন করে একত্রিত হয়।',
+    examples: [{word: '会社', furigana: 'かいしゃ', romaji: 'kaisha', meaning: 'কোম্পানি / অফিস'}, {word: '神社', furigana: 'じんじゃ', romaji: 'jinja', meaning: 'শিন্তো মঠ'}],
+    sentences: [{jp: '会社の休みは日曜日です。', furi: 'かいしゃのやすみはにちようびです。', rom: 'Kaisha no yasumi wa nichiyōbi desu.', bn: 'অফিসের ছুটি রবিবার।'}]
+  },
+  {
+    kanji: '送', lesson: '6', meaning: 'পাঠানো / বিদায় দেওয়া / এসকর্ট করা', strokes: 9, jlpt: 'N4', radical: '⻌ (Walk)',
+    on: 'ソウ (sō)', kun: 'おく.る (oku.ru)', components: '⻌ (রাস্তা) + 𠀐 (উপহার/দু হাত)',
+    story: 'দুটি হাত বাড়িয়ে উপহার বা কোনো জিনিসকে রাস্তার মাধ্যমে নির্দিষ্ট ঠিকানায় পাঠিয়ে দেওয়া।',
+    examples: [{word: '送る', furigana: 'おくる', romaji: 'okuru', meaning: 'পাঠানো'}, {word: '送信する', furigana: 'そうしんする', romaji: 'sōshinsuru', meaning: 'মেসেজ পাঠানো / ট্রান্সমিট করা'}],
+    sentences: [{jp: '手紙を親に送ります。', furi: 'てがみをおやにおくります。', rom: 'Tegami o oya ni okurimasu.', bn: 'আমি মা-বাবার কাছে চিঠি পাঠাবো।'}]
+  },
+
+  // Logistics & Work Environment Mastery (Lessons 7-18 Mix)
+  {
+    kanji: '間', lesson: '7', meaning: 'মধ্যে / ব্যবধান / সময়কাল / রুম', strokes: 12, jlpt: 'N5', radical: '門 (Gate)',
+    on: 'カン / ケン (kan / ken)', kun: 'あいだ / ま (aida / ma)', components: '門 (গেট) + 日 (সূর্য/আলো)',
+    story: 'বন্ধ দরজার দুই পাল্লার মাঝখানের ফাঁকা ফাটল দিয়ে সূর্যের আলো যেভাবে ভেতরে প্রবেশ করে।',
+    examples: [{word: '時間', furigana: 'じかん', romaji: 'jikan', meaning: 'সময়'}, {word: '間に合う', furigana: 'まにあう', romaji: 'maniau', meaning: 'সময়ের মধ্যে পৌঁছানো'}],
+    sentences: [{jp: '二時間勉強しました。', furi: 'にじかんべんきょうしました。', rom: 'Ni-jikan benkyō shimashita.', bn: 'আমি দুই ঘণ্টা পড়াশোনা করেছি।'}]
+  },
+  {
+    kanji: '電', lesson: '7', meaning: 'বিদ্যুৎ / আলো', strokes: 13, jlpt: 'N5', radical: '雨 (Rain)',
+    on: 'デン (den)', kun: '-', components: '雨 (বৃষ্টি) + 申 (বিদ্যুৎ চমকানো/বজ্র)',
+    story: 'মেঘলা আকাশে বৃষ্টির সময় হঠাৎ যে তীব্র শক্তিশালী বৈদ্যুতিক আলো বা বজ্র চমকে ওঠে—তা-ই বিদ্যুৎ।',
+    examples: [{word: '電車', furigana: 'でんしゃ', romaji: 'densha', meaning: 'বৈদ্যুতিক ট্রেন'}, {word: '電話', furigana: 'でんわ', romaji: 'denwa', meaning: 'টেলিফোন'}],
+    sentences: [{jp: '電車の中は混んでいます。', furi: 'でんしゃのなかはこんでいます。', rom: 'Densha no naka wa kondeimasu.', bn: 'ট্রেনের ভেতর বেশ ভিড়।'}]
+  },
+  {
+    kanji: '場', lesson: '7', meaning: 'জায়গা / স্থান / ক্ষেত্র', strokes: 12, jlpt: 'N4', radical: '土 (Earth)',
+    on: 'ジョウ (jō)', kun: 'ば (ba)', components: '土 (মাটি) + 昜 (উজ্জ্বল সূর্য)',
+    story: 'সূর্যের আলোয় আলোকিত মাটির একটি নির্দিষ্ট চত্বর যেখানে কোনো সামাজিক ইভেন্ট বা কাজ ঘটে।',
+    examples: [{word: '場所', furigana: 'しょ', romaji: 'basho', meaning: 'জায়গা'}, {word: '会場', furigana: 'かいじょう', romaji: 'kaijō', meaning: 'অনুষ্ঠানের ভেন্যু / হল'}],
+    sentences: [{jp: '待ち合わせの場所はどこですか？', furi: 'まちあわせのばしょはどこですか？', rom: 'Machiawase no basho wa doko desu ka?', bn: 'দেখা করার জায়গাটি কোথায়?'}]
+  },
+  {
+    kanji: '所', lesson: '7', meaning: 'স্থান / অফিস / কণা', strokes: 8, jlpt: 'N4', radical: '戸 (Door)',
+    on: 'ショ (sho)', kun: 'ところ (tokoro)', components: '戸 (দরজা) + 斤 (কুঠার)',
+    story: 'কুঠার দিয়ে কাঠের দরজা কেটে যেখানে থাকার নির্দিষ্ট নিরাপদ ঠিকানা বা স্থান রেডি করা হয়।',
+    examples: [{word: '場所', furigana: 'ばしょ', romaji: 'basho', meaning: 'স্থান'}, {word: '近所', furigana: 'きんじょ', romaji: 'kinjo', meaning: 'আশেপাশের এলাকা'}],
+    sentences: [{jp: 'ここは静かな所ですね。', furi: 'ここはしずかなところですね。', rom: 'Koko wa shizuka na tokoro desu ne.', bn: 'এটি খুব শান্ত একটি জায়গা, তাই না?'}]
+  },
+  {
+    kanji: '待', lesson: '7', meaning: 'অপেক্ষা করা', strokes: 9, jlpt: 'N5', radical: '彳 (Step)',
+    on: 'タイ (tai)', kun: 'ま.つ (ma.tsu)', components: '彳 (হাঁটা/রাস্তা) + 寺 (মন্দির)',
+    story: 'বন্ধুর সাথে দেখা করার জন্য মন্দিরের সামনের রাস্তায় দাঁড়িয়ে ধীরস্থিরভাবে "অপেক্ষা" করা।',
+    examples: [{word: '待つ', furigana: 'まつ', romaji: 'matsu', meaning: 'অপেক্ষা করা'}, {word: '期待する', furigana: 'きたいする', romaji: 'kitaisuru', meaning: 'আশা করা / প্রত্যাশা'}],
+    sentences: [{jp: 'ちょっと待ってください。', furi: 'ちょっとまってください。', rom: 'Chotto matte kudasai.', bn: 'দয়া করে একটু অপেক্ষা করুন।'}]
+  },
+  {
+    kanji: '駅', lesson: '7', meaning: 'স্টেশন / টার্মিনাল', strokes: 14, jlpt: 'N5', radical: '馬 (Horse)',
+    on: 'エキ (eki)', kun: '-', components: '馬 (ঘোড়া) + 尺 (পরিমাপ/দূরত্ব)',
+    story: 'প্রাচীন সরকারি বার্তা বহনকারী রাজকীয় ঘোড়াগুলো নির্দিষ্ট দূরত্ব পর যেখানে এসে থামতো ও জিরিয়ে নিতো।',
+    examples: [{word: '駅員', furigana: 'えきいん', romaji: 'eki-in', meaning: 'স্টেশন মাস্টার / স্টাফ'}, {word: '東京駅', furigana: 'とうきょうえき', romaji: 'tōkyōeki', meaning: 'টোকিও স্টেশন'}],
+    sentences: [{jp: '駅から歩いて５分です。', furi: 'えきからあるいてごふんです。', rom: 'Eki kara aruite go-fun desu.', bn: 'স্টেশন থেকে হেঁটে ৫ মিনিটের পথ।'}]
+  },
+  {
+    kanji: '止', lesson: '7', meaning: 'থামা / বন্ধ করা', strokes: 4, jlpt: 'N5', radical: '止 (Stop)',
+    on: 'シ (shi)', kun: 'と.まる / と.める (to.maru / to.meru)', components: '止 (পায়ের ছাপ)',
+    story: 'রাস্তায় চলতে চলতে হঠাৎ পায়ের বুড়ো আঙুল মাটির দিকে চেপে গতি সম্পূর্ণ "বন্ধ" বা স্টপ করা।',
+    examples: [{word: '止まる', furigana: 'とまる', romaji: 'tomaru', meaning: 'থামা'}, {word: '禁止', furigana: 'きんし', romaji: 'kinshi', meaning: 'নিষেধাজ্ঞা / Prohibited'}],
+    sentences: [{jp: 'ここに車を止めないでください。', furi: 'ここにくるまをとめないでください。', rom: 'Koko ni kuruma o tomenaide kudasai.', bn: 'এখানে গাড়ি থামাবেন না।'}]
+  },
+  {
+    kanji: '受', lesson: '7', meaning: 'গ্রহণ করা / পরীক্ষা দেওয়া', strokes: 8, jlpt: 'N4', radical: '又 (Again)',
+    on: 'ジュ (ju)', kun: 'う.ける (u.keru)', components: '受 (গ্রহণ করা)',
+    story: 'উপর থেকে কেউ একটি নৌকা বা জিনিস বাড়িয়ে দিচ্ছে আর নিচ থেকে অন্যজন হাত বাড়িয়ে তা রিসিভ করছে।',
+    examples: [{word: '受付', furigana: 'うけつけ', romaji: 'uketsuke', meaning: 'অভ্যর্থনা / ফ্রন্ট ডেস্ক'}, {word: '受験する', furigana: 'じゅけんする', romaji: 'jukensuru', meaning: 'পরীক্ষা দেওয়া'}],
+    sentences: [{jp: '受付で名前を書いてください。', furi: 'うけつけでなまえをかいてください。', rom: 'Uketsuke de namae o kaite kudasai.', bn: 'রিসেপশনে আপনার নাম লিখুন।'}]
+  },
+  {
+    kanji: '付', lesson: '7', meaning: 'সংযুক্ত করা / লেগে থাকা / কাউন্টার', strokes: 5, jlpt: 'N4', radical: '人 (Human)',
+    on: 'フ (fu)', kun: 'つ.ける / つ.く (tsu.keru / tsu.ku)', components: '微 (মানুষ) + 寸 (ইঞ্চি/ছোট পরিমাপ)',
+    story: 'একজন মানুষ খুব কাছাকাছি গিয়ে অন্য একটি জিনিসের সাথে নিজেকে আঠা বা স্ক্রু দিয়ে অ্যাটাচ করছে।',
+    examples: [{word: '受付', furigana: 'うけつけ', romaji: 'uketsuke', meaning: 'রিসেপশন'}, {word: '片付ける', furigana: 'かたづける', romaji: 'katadukeru', meaning: 'গোছগাছ করা'}],
+    sentences: [{jp: '鍵がカバンに付いています。', furi: 'かぎがかばんについています。', rom: 'Kagi ga kaban ni tsuiteimasu.', bn: 'চাবিটি ব্যাগের সাথে লেগে আছে।'}]
+  },
+  {
+    kanji: '着', lesson: '7', meaning: 'পৌঁছানো / পরিধান করা / জামা', strokes: 12, jlpt: 'N4', radical: '羊 (Sheep)',
+    on: 'チャク (chaku)', kun: 'つ.く / き.る (tsu.ku / ki.ru)', components: '羊 + 目 (চোখ)',
+    story: 'ভেড়ার লোমের তৈরি গরম জামা শরীরে পরা এবং অনেক দূর হেঁটে গন্তব্যে চোখ রাখা।',
+    examples: [{word: '着く', furigana: 'つく', romaji: 'tsuku', meaning: 'পৌঁছানো'}, {word: '着物', furigana: 'きもの', romaji: 'kimono', meaning: 'কিমোনো (ঐতিহ্যবাহী পোশাক)'}],
+    sentences: [{jp: '飛行機は明日の朝到着します。', furi: 'ひこうきはあしたのあさとうちゃくします。', rom: 'Hikōki wa ashita no asa tōchaku shimasu.', bn: 'বিমানটি আগামীকাল সকালে এসে পৌঁছাবে।'}]
+  },
+  {
+    kanji: '門', lesson: '7', meaning: 'গেট / প্রবেশদ্বার / বিভাগ', strokes: 8, jlpt: 'N5', radical: '門 (Gate)',
+    on: 'モン (mon)', kun: 'かど (kado)', components: '門 (ফটক)',
+    story: 'প্রাচীনকালের ঐতিহ্যবাহী দুই পাল্লা বিশিষ্ট বিশাল রাজপ্রাসাদ বা দুর্গের কাঠের মেইন গেট।',
+    examples: [{word: '正門', furigana: 'せいもん', romaji: 'seimon', meaning: 'প্রধান ফটক'}, {word: '専門学校', furigana: 'せんもんがっこう', romaji: 'senmon gakkō', meaning: 'ভোকেশনাল / টেকনিক্যাল স্কুল'}],
+    sentences: [{jp: '学校の門の横に桜があります。', furi: 'がっこうのもんのよこにさくらがあります。', rom: 'Gakkō no mon no yoko ni sakura ga arimasu.', bn: 'স্কুলের গেটের পাশে সাকুরা গাছ আছে।'}]
+  },
+  {
+    kanji: '急', lesson: '7', meaning: 'জরুরী / দ্রুত / তাড়া', strokes: 9, jlpt: 'N4', radical: '心 (Heart)',
+    on: 'キュウ (kyū)', kun: 'いそ.ぐ (iso.gu)', components: '𠂊 + ヨ + 心 (হৃদয়/মন)',
+    story: 'জরুরী পরিস্থিতিতে মন বা হৃদস্পন্দন যখন দ্রুত বেড়ে যায় এবং মানুষ তাড়া হূড়ো করে কাজ করে।',
+    examples: [{word: '急ぐ', furigana: 'いそぐ', romaji: 'isogu', meaning: 'তাড়াতাড়ি করা'}, {word: '急行', furigana: 'きゅうこう', romaji: 'express train / দ্রুতগামী ট্রেন'}],
+    sentences: [{jp: '時間がありませんから、急ぎましょう。', furi: 'じかんがありませんから、いそぎましょう。', rom: 'Jikan ga arimasen kara, isogimashō.', bn: 'সময় নেই, চলুন একটু তাড়াতাড়ি করি।'}]
+  }
+];
+
+// STATE MANAGEMENT
+let kanjiList = [...RAW_KANJI_DATABASE];
+let filteredKanji = [...RAW_KANJI_DATABASE];
+let currentMode = 'flashcard';
+let currentIndex = 0;
+let selectedJLPT = 'all';
+let selectedLesson = 'all';
+let searchTimeout = null;
+
+// Progress Store Struct
+let userProgress = JSON.parse(localStorage.getItem('kanji_progress_2026')) || {};
+let quizScore = 0;
+let currentQuizIndex = 0;
+let currentQuizItem = null;
+
+// INITIALIZER
+window.onload = function() {
+  generateLessonChips();
+  calculateStats();
+  applyFiltersAndSearch();
+  initSpeechSynthesis();
+};
+
+function generateLessonChips() {
+  const lessons = [...new Set(RAW_KANJI_DATABASE.map(k => k.lesson))].sort((a,b)=>parseInt(a)-parseInt(b));
+  const container = document.getElementById('lessonChipsContainer');
+  lessons.forEach(l => {
+    container.innerHTML += `<button class="chip" onclick="filterLesson('${l}', this)">L${l}</button>`;
+  });
+}
+
+function calculateStats() {
+  let known = 0, review = 0, master = 0;
+  RAW_KANJI_DATABASE.forEach(k => {
+    const status = userProgress[k.kanji];
+    if(status === 'known') known++;
+    if(status === 'review') review++;
+    if(status === 'master') master++;
+  });
+  document.getElementById('stTotal').textContent = RAW_KANJI_DATABASE.length;
+  document.getElementById('stKnown').textContent = known;
+  document.getElementById('stReview').textContent = review;
+  document.getElementById('stMaster').textContent = master;
+}
+
+// VIEW SWITCHER
+function switchMode(mode) {
+  currentMode = mode;
+  document.querySelectorAll('.mode-btn').forEach((btn, idx) => {
+    btn.classList.toggle('active', (idx===0 && mode==='flashcard') || (idx===1 && mode==='list') || (idx===2 && mode==='quiz'));
+  });
+  
+  document.getElementById('flashcardMode').classList.toggle('hidden', mode !== 'flashcard');
+  document.getElementById('listMode').classList.toggle('hidden', mode !== 'list');
+  document.getElementById('quizMode').classList.toggle('hidden', mode !== 'quiz');
+
+  if(mode === 'flashcard') renderFlashcard();
+  if(mode === 'list') renderListView();
+  if(mode === 'quiz') startQuizSession();
+}
+
+// FILTER CONTROLLERS
+function filterJLPT(level, btn) {
+  selectedJLPT = level;
+  toggleActiveChip(btn);
+  applyFiltersAndSearch();
+}
+
+function filterLesson(lesson, btn) {
+  selectedLesson = lesson;
+  toggleActiveChip(btn);
+  applyFiltersAndSearch();
+}
+
+function toggleActiveChip(clickedBtn) {
+  clickedBtn.parentNode.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  clickedBtn.classList.add('active');
+}
+
+// DEBOUNCED SEARCH ENGINE
+function debouncedSearch() {
+  clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(() => {
+    applyFiltersAndSearch();
+  }, 300);
+}
+
+function applyFiltersAndSearch() {
+  const query = document.getElementById('searchBar').value.toLowerCase().trim();
+  
+  filteredKanji = RAW_KANJI_DATABASE.filter(k => {
+    const matchJLPT = (selectedJLPT === 'all' || k.jlpt === selectedJLPT);
+    const matchLesson = (selectedLesson === 'all' || k.lesson === selectedLesson);
+    
+    // Check deep fields for real-time search match
+    const matchSearch = !query || (
+      k.kanji.toLowerCase().includes(query) ||
+      k.meaning.toLowerCase().includes(query) ||
+      k.on.toLowerCase().includes(query) ||
+      k.kun.toLowerCase().includes(query) ||
+      k.radical.toLowerCase().includes(query) ||
+      (k.examples && k.examples.some(ex => ex.word.includes(query) || ex.romaji.includes(query) || ex.meaning.toLowerCase().includes(query)))
+    );
+
+    return matchJLPT && matchLesson && matchSearch;
+  });
+
+  currentIndex = 0;
+  if(currentMode === 'flashcard') renderFlashcard();
+  if(currentMode === 'list') renderListView();
+}
+
+// FLASHCARD ENGINE
+function renderFlashcard() {
+  const flipper = document.getElementById('flipper');
+  flipper.classList.remove('flipped');
+
+  if(filteredKanji.length === 0) {
+    document.getElementById('fcKanji').textContent = "空";
+    document.getElementById('fcLesson').textContent = "Lesson --";
+    document.getElementById('fcStrokes').textContent = "0 Strokes";
+    document.getElementById('fcBackMeaning').textContent = "No Data Found";
+    return;
+  }
+
+  const k = filteredKanji[currentIndex];
+  document.getElementById('fcKanji').textContent = k.kanji;
+  document.getElementById('fcLesson').textContent = `Lesson ${k.lesson}`;
+  document.getElementById('fcStrokes').textContent = `${k.strokes} Strokes`;
+  document.getElementById('fcLevel').textContent = `JLPT ${k.jlpt}`;
+
+  // Card Back Elements
+  document.getElementById('fcBackMeaning').textContent = k.meaning;
+  document.getElementById('fcBackOn').textContent = k.on;
+  document.getElementById('fcBackKun').textContent = k.kun;
+  document.getElementById('fcBackRadical').textContent = k.radical;
+  document.getElementById('fcBackStory').textContent = k.story || 'No story available.';
+
+  // Bind audio button on back side
+  document.getElementById('fcBackAudio').onclick = (e) => {
+    e.stopPropagation();
+    speakKanjiVoice(k.kanji, k.on, k.kun);
+  };
+}
+
+function toggleFlip() {
+  document.getElementById('flipper').classList.toggle('flipped');
+}
+
+// LOCALSTORAGE PROGRESS MANAGER
+function updateProgress(status) {
+  if(filteredKanji.length === 0) return;
+  const currentKanji = filteredKanji[currentIndex].kanji;
+  userProgress[currentKanji] = status;
+  localStorage.setItem('kanji_progress_2026', JSON.stringify(userProgress));
+  
+  calculateStats();
+  
+  // Slide to next card seamlessly
+  if(currentIndex < filteredKanji.length - 1) {
+    currentIndex++;
+    renderFlashcard();
+  } else {
+    alert('অভিনন্দন! আপনি এই ফিল্টারের সব কাঞ্জি সম্পন্ন করেছেন। 🎉');
+    currentIndex = 0;
+    renderFlashcard();
+  }
+}
+
+// AUDIO SYNTHESIS ENGINE
+function initSpeechSynthesis() {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.getVoices();
+  }
+}
+
+function playAudio(event) {
+  event.stopPropagation();
+  if(filteredKanji.length === 0) return;
+  const k = filteredKanji[currentIndex];
+  speakKanjiVoice(k.kanji, k.on, k.kun);
+}
+
+function speakKanjiVoice(kanji, onyomi, kunyomi) {
+  if (!('speechSynthesis' in window)) return;
+  window.speechSynthesis.cancel(); // Stop current playing audio
+
+  // Clean characters for clean reading voice
+  const cleanOn = onyomi.replace(/[^ぁ-んァ-ン一-龯]/g, '');
+  const cleanKun = kunyomi.replace(/[^ぁ-んァ-ン一-龯]/g, '');
+
+  const utterance = new SpeechSynthesisUtterance(`${kanji}。 音読みは、${cleanOn}。訓読みは、${cleanKun}`);
+  utterance.lang = 'ja-JP';
+  utterance.rate = 0.85; 
+  window.speechSynthesis.speak(utterance);
+}
+
+// LIST VIEW SYSTEM
+function renderListView() {
+  const container = document.getElementById('listMode');
+  container.innerHTML = '';
+
+  if(filteredKanji.length === 0) {
+    container.innerHTML = '<div style="grid-column:1/-1; text-align:center; color:var(--hint); padding:40px;">No Kanji fits the filter.</div>';
+    return;
+  }
+
+  filteredKanji.forEach(k => {
+    const status = userProgress[k.kanji] || '';
+    let dotColor = 'transparent';
+    if(status === 'known') dotColor = '#3da9fc';
+    if(status === 'review') dotColor = 'var(--warning)';
+    if(status === 'master') dotColor = 'var(--success)';
+
+    const card = document.createElement('div');
+    card.className = 'mini-card';
+    card.onclick = () => openModal(k);
+    card.innerHTML = `
+      <div class="status-dot" style="background:${dotColor}"></div>
+      <div class="k-char">${k.kanji}</div>
+      <div class="k-mean">${k.meaning.split('/')[0]}</div>
+      <div class="k-less">L${k.lesson} • ${k.strokes}S</div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+// ADVANCED QUIZ SYSTEM
+function startQuizSession() {
+  quizScore = 0;
+  currentQuizIndex = 0;
+  document.getElementById('quizScore').textContent = quizScore;
+  generateQuizQuestion();
+}
+
+function generateQuizQuestion() {
+  if(currentQuizIndex >= 10) {
+    alert(`কুইজ শেষ! আপনার মোট স্কোরের রেকর্ড: ${quizScore}/10`);
+    startQuizSession();
+    return;
+  }
+  
+  currentQuizIndex++;
+  document.getElementById('quizProgress').textContent = `${currentQuizIndex}/10`;
+  document.getElementById('quizExplanation').classList.add('hidden');
+  document.getElementById('nextQuizBtn').classList.add('hidden');
+
+  // Random item picked
+  const randIndex = Math.floor(Math.random() * RAW_KANJI_DATABASE.length);
+  currentQuizItem = RAW_KANJI_DATABASE[randIndex];
+
+  // Randomize Question Type
+  const qTypes = ['kanji2meaning', 'meaning2kanji', 'reading2kanji'];
+  const currentType = qTypes[Math.floor(Math.random() * qTypes.length)];
+
+  const questionBox = document.getElementById('questionBox');
+  const optionsBox = document.getElementById('optionsBox');
+  optionsBox.innerHTML = '';
+
+  let correctAnswer = '';
+  
+  if(currentType === 'kanji2meaning') {
+    questionBox.innerHTML = `<span class="large-q">${currentQuizItem.kanji}</span> এই কাঞ্জিটির সঠিক বাংলা অর্থ কোনটি?`;
+    correctAnswer = currentQuizItem.meaning;
+  } else if(currentType === 'meaning2kanji') {
+    questionBox.innerHTML = `<span class="large-q" style="font-size:24px; color:var(--success);">${currentQuizItem.meaning}</span> এর সঠিক জাপানি কাঞ্জি কোনটি?`;
+    correctAnswer = currentQuizItem.kanji;
+  } else if(currentType === 'reading2kanji') {
+    const reading = currentQuizItem.kun.split('/')[0] || currentQuizItem.on.split(' ')[0];
+    questionBox.innerHTML = `<span class="large-q" style="font-size:32px; color:var(--primary);">${reading}</span> এটি কোন কাঞ্জির রিডিং উচ্চারণ?`;
+    correctAnswer = currentQuizItem.kanji;
+  }
+
+  // Generate Multiple Choice Options
+  let options = [correctAnswer];
+  while(options.length < 4) {
+    const dummyItem = RAW_KANJI_DATABASE[Math.floor(Math.random() * RAW_KANJI_DATABASE.length)];
+    const dummyVal = (currentType === 'kanji2meaning') ? dummyItem.meaning : dummyItem.kanji;
+    if(!options.includes(dummyVal)) options.push(dummyVal);
+  }
+  options.sort(() => Math.random() - 0.5); // Shuffle options
+
+  options.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    btn.textContent = opt;
+    btn.onclick = () => handleAnswer(btn, opt, correctAnswer);
+    optionsBox.appendChild(btn);
+  });
+}
+
+function handleAnswer(selectedBtn, selectedOpt, correctOpt) {
+  const optionsBox = document.getElementById('optionsBox');
+  // Freeze options interaction
+  optionsBox.querySelectorAll('.opt-btn').forEach(b => b.disabled = true);
+
+  if(selectedOpt === correctOpt) {
+    selectedBtn.classList.add('correct');
+    quizScore++;
+    document.getElementById('quizScore').textContent = quizScore;
+  } else {
+    selectedBtn.classList.add('wrong');
+    // Highlight correct one
+    optionsBox.querySelectorAll('.opt-btn').forEach(b => {
+      if(b.textContent === correctOpt) b.classList.add('correct');
+    });
+  }
+
+  // Display explanation
+  const exp = document.getElementById('quizExplanation');
+  exp.innerHTML = `<strong>ব্যাখ্যা:</strong> কাঞ্জিটি হলো <b>${currentQuizItem.kanji}</b> যার অর্থ <b>${currentQuizItem.meaning}</b>।<br>কুন্‌ইয়োমি: ${currentQuizItem.kun} | ওন্‌ইয়োমি: ${currentQuizItem.on}<br><i>ট্রিক: ${currentQuizItem.story}</i>`;
+  exp.classList.remove('hidden');
+  document.getElementById('nextQuizBtn').classList.remove('hidden');
+}
+
+// FULL DETAILS MODAL CONTROLLER
+function openModal(k) {
+  document.getElementById('mdKanji').textContent = k.kanji;
+  document.getElementById('mdStrokes').textContent = `${k.strokes} Strokes`;
+  document.getElementById('mdMeaning').textContent = k.meaning;
+  document.getElementById('mdMeta').textContent = `JLPT ${k.jlpt} • Lesson ${k.lesson}`;
+  document.getElementById('mdRadical').textContent = `Radical: ${k.radical}`;
+  document.getElementById('mdOn').textContent = k.on;
+  document.getElementById('mdKun').textContent = k.kun;
+  
+  // Memory components
+  document.getElementById('mdComponents').textContent = k.components || k.kanji;
+  document.getElementById('mdStory').textContent = k.story || 'No memory story mapped yet.';
+
+  // Render Compounded Examples
+  const exWrap = document.getElementById('mdExamples');
+  exWrap.innerHTML = '';
+  if(k.examples && k.examples.length > 0) {
+    k.examples.forEach(ex => {
+      exWrap.innerHTML += `
+        <div class="ex-item">
+          <span class="jp-txt" style="font-size:15px;">${ex.word}</span> 
+          <span style="color:var(--primary); font-size:12px;">(${ex.furigana} / ${ex.romaji})</span>
+          <div style="color:var(--success); font-size:12px; margin-top:2px;">➔ ${ex.meaning}</div>
+        </div>`;
+    });
+  } else {
+    exWrap.innerHTML = '<div style="font-size:12px; color:var(--hint)">No composite words available.</div>';
+  }
+
+  // Render Sentence Block
+  const sentWrap = document.getElementById('mdSentences');
+  sentWrap.innerHTML = '';
+  if(k.sentences && k.sentences.length > 0) {
+    k.sentences.forEach(s => {
+      sentWrap.innerHTML += `
+        <div class="sent-item">
+          <div class="jp-txt" style="color:#fff; font-size:14px;">${s.jp}</div>
+          <div style="color:var(--muted); font-size:11px;">${s.furi} (${s.rom})</div>
+          <div style="color:var(--warning); font-size:12px; margin-top:4px;">অর্থ: ${s.bn}</div>
+        </div>`;
+    });
+  } else {
+    sentWrap.innerHTML = '<div style="font-size:12px; color:var(--hint)">No contextual sentence data found.</div>';
+  }
+
+  document.getElementById('detailModal').classList.add('show');
+}
+
+function closeModal() {
+  document.getElementById('detailModal').classList.remove('show');
+}
+</script>
+</body>
+</html>
