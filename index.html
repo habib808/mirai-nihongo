@@ -76,7 +76,7 @@ h1 {
 }
 .mode-btn.active { background: var(--surface2); color: var(--current-theme); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
 
-.search-container { margin-bottom: 20px; position: relative; }
+.search-container { margin-bottom: 20px; position: relative; z-index: 50; }
 .search-input {
   width: 100%; padding: 14px 16px 14px 44px; background: var(--surface); border: 1px solid var(--border);
   border-radius: 14px; color: var(--text); font-family: 'Noto Sans Bengali', 'Space Mono', sans-serif; font-size: 14px; transition: all 0.3s;
@@ -85,8 +85,9 @@ h1 {
 .search-icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--hint); font-size: 16px; }
 
 .search-results {
-  position: absolute; top: 100%; left: 0; right: 0; background: var(--surface2); border: 1px solid var(--border);
-  border-radius: 12px; margin-top: 5px; max-height: 250px; overflow-y: auto; z-index: 100; box-shadow: 0 10px 25px rgba(0,0,0,0.4); display: none;
+  position: fixed; background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 12px; max-height: 280px; overflow-y: auto; z-index: 99999;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.6); display: none; min-width: 280px;
 }
 .search-item { padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.04); cursor: pointer; transition: background 0.2s; }
 .search-item:hover { background: rgba(255,255,255,0.05); }
@@ -102,13 +103,49 @@ h1 {
 .stat.again .stat-num { color: #f25f4c; }
 .stat.total .stat-num { color: var(--current-theme); }
 
-.filter-row, .cat-filter-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
-.filter-btn {
-  font-family: 'Noto Sans Bengali', sans-serif; font-size: 12px; padding: 6px 14px; border-radius: 100px;
-  border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; transition: all 0.2s;
+/* ── Dropdown Filter Panel ── */
+.filter-panel { margin-bottom: 16px; display: flex; gap: 10px; }
+.dropdown-wrap { position: relative; flex: 1; }
+.dropdown-trigger {
+  width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  padding: 11px 14px; background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; color: var(--text); font-family: 'Noto Sans Bengali', sans-serif;
+  font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.25s; white-space: nowrap;
 }
-.filter-btn:hover { border-color: rgba(255,255,255,0.2); color: var(--text); }
-.filter-btn.active { color: #000; border-color: transparent; font-weight: 600; background: var(--lt-color, var(--current-theme)); }
+.dropdown-trigger:hover { border-color: var(--current-theme); }
+.dropdown-trigger.open { border-color: var(--current-theme); box-shadow: 0 0 0 3px var(--current-glow); }
+.dropdown-trigger .dt-label { display: flex; align-items: center; gap: 6px; overflow: hidden; }
+.dropdown-trigger .dt-val { color: var(--current-theme); font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 120px; }
+.dropdown-trigger .dt-arrow { font-size: 10px; color: var(--hint); transition: transform 0.2s; flex-shrink: 0; }
+.dropdown-trigger.open .dt-arrow { transform: rotate(180deg); }
+
+.dropdown-menu {
+  position: absolute; top: calc(100% + 6px); left: 0; right: 0; min-width: 220px;
+  background: var(--surface2); border: 1px solid var(--border); border-radius: 14px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.5); z-index: 200;
+  opacity: 0; pointer-events: none; transform: translateY(-6px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  max-height: 280px; overflow-y: auto; padding: 6px;
+}
+.dropdown-menu.open { opacity: 1; pointer-events: auto; transform: translateY(0); }
+.dm-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 9px 12px; border-radius: 9px; cursor: pointer;
+  font-family: 'Noto Sans Bengali', sans-serif; font-size: 13px; color: var(--muted);
+  transition: background 0.15s, color 0.15s; white-space: nowrap;
+}
+.dm-item:hover { background: rgba(255,255,255,0.05); color: var(--text); }
+.dm-item.active { background: var(--current-glow); color: var(--current-theme); font-weight: 700; }
+.dm-item .dm-dot {
+  width: 8px; height: 8px; border-radius: 50%; background: currentColor;
+  opacity: 0; transition: opacity 0.15s; flex-shrink: 0;
+}
+.dm-item.active .dm-dot { opacity: 1; }
+.dm-sep { height: 1px; background: var(--border); margin: 4px 0; }
+
+/* legacy compat — hidden now */
+.filter-row, .cat-filter-row { display: none; }
+.filter-btn { display: none; }
 
 .progress-wrap { margin-bottom: 16px; }
 .progress-info { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
@@ -224,14 +261,38 @@ kbd { font-family: 'Space Mono', monospace; background: var(--surface2); border:
     <button class="mode-btn" onclick="window.location.href='kanji.html'">🈶 Kanji</button>
   </div>
 
-  <div class="search-container">
-    <span class="search-icon">🔍</span>
-    <input type="text" class="search-input" id="searchInput" placeholder="শব্দ বা অর্থ খুঁজুন (যেমন: asagohan, niku, ভাত)..." oninput="handleSearch()">
-    <div class="search-results" id="searchResults"></div>
+  <div style="margin-bottom:20px; position:relative;">
+    <span style="position:absolute;left:16px;top:50%;transform:translateY(-50%);color:#6b6d80;font-size:16px;pointer-events:none;">🔍</span>
+    <input type="text" id="searchInput"
+      placeholder="শব্দ বা অর্থ খুঁজুন (যেমন: asagohan, niku, ভাত)..."
+      style="width:100%;padding:14px 16px 14px 44px;background:#1a1825;border:1px solid rgba(255,255,255,0.08);border-radius:14px;color:#fffffe;font-family:inherit;font-size:14px;outline:none;box-sizing:border-box;"
+      onfocus="this.style.borderColor=getComputedStyle(document.documentElement).getPropertyValue('--current-theme').trim(); this.style.boxShadow='0 0 0 3px '+getComputedStyle(document.documentElement).getPropertyValue('--current-glow').trim();"
+      onblur="this.style.borderColor='rgba(255,255,255,0.08)'; this.style.boxShadow='none';">
+  </div>
+  <div id="searchResults" style="display:none;position:fixed;background:#242233;border:1px solid rgba(255,255,255,0.15);border-radius:12px;max-height:300px;overflow-y:auto;z-index:999999;box-shadow:0 16px 40px rgba(0,0,0,0.8);"></div>
+
+  <div class="filter-panel">
+    <!-- Lesson Dropdown -->
+    <div class="dropdown-wrap" id="lessonDropWrap">
+      <button class="dropdown-trigger" id="lessonDropBtn" onclick="toggleDropdown('lesson')">
+        <span class="dt-label">📚 <span class="dt-val" id="lessonDropLabel">সব পাঠ</span></span>
+        <span class="dt-arrow">▼</span>
+      </button>
+      <div class="dropdown-menu" id="lessonDropMenu"></div>
+    </div>
+    <!-- Category Dropdown -->
+    <div class="dropdown-wrap" id="catDropWrap">
+      <button class="dropdown-trigger" id="catDropBtn" onclick="toggleDropdown('cat')">
+        <span class="dt-label">🏷️ <span class="dt-val" id="catDropLabel">সব ক্যাটাগরি</span></span>
+        <span class="dt-arrow">▼</span>
+      </button>
+      <div class="dropdown-menu" id="catDropMenu"></div>
+    </div>
   </div>
 
-  <div class="filter-row" id="lessonFilters"></div>
-  <div class="cat-filter-row" id="catFilters"></div>
+  <!-- legacy hidden containers (kept for JS compat) -->
+  <div class="filter-row" id="lessonFilters" style="display:none"></div>
+  <div class="cat-filter-row" id="catFilters" style="display:none"></div>
 
   <div id="flashcardsView">
     <div class="stats-bar">
@@ -2521,7 +2582,14 @@ const WORDS = [
 
 // স্ট্যাটিক কালার প্যালেট (লিস্টে না থাকলে অটো-র্যান্ডম জেনারেট হবে)
 const lessonColors = {'1':'#22c55e','2':'#ec4899','5':'#ff8906','6':'#3da9fc','7':'#43d9ad','8':'#a78bfa','10':'#fbbf24','11':'#f43f5e','18':'#14b8a6'};
-const catLabels = {food:'খাবার 🍱',drink:'পানীয় 🥤',home:'ঘর/অফিস 🏠',adj:'বিশেষণ ✨',verb:'ক্রিয়া ⚡',phrase:'বাক্যাংশ 💬',other:'অন্যান্য 📦'};
+const catLabels = {
+  food:'খাবার 🍱', drink:'পানীয় 🥤', home:'ঘর/অফিস 🏠',
+  adj:'বিশেষণ ✨', verb:'ক্রিয়া ⚡', phrase:'বাক্যাংশ 💬',
+  other:'অন্যান্য 📦', word:'শব্দ 📝', place:'স্থান 🗺️',
+  item:'জিনিস 🎒', num:'সংখ্যা 🔢', lang:'ভাষা 🌐',
+  animal:'প্রাণী 🐾', N:'বিশেষ্য 🏷️', Exp:'অভিব্যক্তি 💡',
+  person:'ব্যক্তি 👤', time:'সময় 🕐', color:'রং 🎨'
+};
 
 let deck=[], idx=0, flipped=false, known=0, again=0;
 let filterLesson='all', filterCat='all';
@@ -2605,7 +2673,9 @@ function showCard() {
   document.getElementById('againStat').textContent = again;
   
   document.getElementById('progLabel').textContent = `কার্ড ${idx+1} / ${deck.length}`;
-  document.getElementById('progFill').style.width = ((idx+1)/deck.length*100) + '%';
+  const pct = Math.round((idx+1)/deck.length*100);
+  document.getElementById('progPct').textContent = pct + '%';
+  document.getElementById('progFill').style.width = pct + '%';
 }
 
 function toggleFlip() {
@@ -2626,7 +2696,11 @@ function startQuiz() {
   clearInterval(quizTimer);
   document.getElementById('completion').classList.remove('show');
   
-  let sourceWords = filterLesson === 'all' ? [...WORDS] : WORDS.filter(w => w.l === filterLesson);
+  let sourceWords = WORDS.filter(w => {
+    const ml = filterLesson === 'all' || w.l === filterLesson;
+    const mc = filterCat === 'all' || w.cat === filterCat;
+    return ml && mc;
+  });
   quizDeck = sourceWords.sort(() => Math.random() - 0.5).slice(0, 10);
   
   if(quizDeck.length === 0) {
@@ -2773,115 +2847,181 @@ function speakWord(event) {
   window.speechSynthesis.speak(utterance);
 }
 
-function handleSearch() {
-  const query = document.getElementById('searchInput').value.toLowerCase().trim();
-  const resultsDiv = document.getElementById('searchResults');
-  if(!query) { resultsDiv.style.display = 'none'; return; }
-  
-  const filtered = WORDS.filter(w => 
-    w.jp.toLowerCase().includes(query) || 
-    w.kana.toLowerCase().includes(query) || 
-    w.rom.toLowerCase().includes(query) || 
-    w.bn.toLowerCase().includes(query)
-  );
-  
-  resultsDiv.innerHTML = '';
-  if(filtered.length === 0) {
-    resultsDiv.innerHTML = '<div class="search-item" style="color:var(--hint)">কোনো শব্দ পাওয়া যায়নি।</div>';
-  } else {
-    filtered.slice(0, 6).forEach(w => {
-      const item = document.createElement('div');
-      item.className = 'search-item';
-      item.innerHTML = `
-        <div><span class="item-jp">${w.jp}</span><span class="item-rom">(${w.rom})</span></div>
-        <div class="item-bn">অর্থ: <b>${w.bn}</b> (পাঠ ${w.l})</div>
-      `;
-      item.onclick = () => {
-        resultsDiv.style.display = 'none';
-        document.getElementById('searchInput').value = '';
-        filterLesson = w.l;
-        buildFilters();
-        load();
-        idx = deck.findIndex(item => item.jp === w.jp);
-        if(idx === -1) idx = 0;
-        showCard();
-      };
-      resultsDiv.appendChild(item);
+
+// ─── Dropdown State ───
+let openDropdown = null;
+
+function toggleDropdown(which) {
+  if(openDropdown === which) { closeAllDropdowns(); return; }
+  closeAllDropdowns();
+  openDropdown = which;
+  document.getElementById(which+'DropBtn').classList.add('open');
+  document.getElementById(which+'DropMenu').classList.add('open');
+}
+
+function closeAllDropdowns() {
+  openDropdown = null;
+  ['lesson','cat'].forEach(w => {
+    const btn = document.getElementById(w+'DropBtn');
+    const menu = document.getElementById(w+'DropMenu');
+    if(btn) btn.classList.remove('open');
+    if(menu) menu.classList.remove('open');
+  });
+}
+
+// ─── Lesson Dropdown ───
+function buildFilters(){
+  const menu = document.getElementById('lessonDropMenu');
+  if(!menu) return;
+  menu.innerHTML = '';
+
+  const uniqueLessons = [...new Set(WORDS.map(w => w.l))].sort((a,b) => parseInt(a)-parseInt(b));
+
+  const allItem = document.createElement('div');
+  allItem.className = 'dm-item' + (filterLesson==='all' ? ' active' : '');
+  allItem.innerHTML = '<span class="dm-dot"></span> সব পাঠ';
+  allItem.onclick = () => {
+    filterLesson = 'all';
+    document.getElementById('lessonDropLabel').textContent = 'সব পাঠ';
+    buildFilters(); closeAllDropdowns();
+    if(currentMode==='flashcards') load(); else startQuiz();
+  };
+  menu.appendChild(allItem);
+
+  const sep = document.createElement('div'); sep.className = 'dm-sep'; menu.appendChild(sep);
+
+  uniqueLessons.forEach(l => {
+    const item = document.createElement('div');
+    item.className = 'dm-item' + (l===filterLesson ? ' active' : '');
+    item.innerHTML = '<span class="dm-dot"></span> পাঠ ' + l;
+    item.onclick = () => {
+      filterLesson = l;
+      document.getElementById('lessonDropLabel').textContent = 'পাঠ ' + l;
+      buildFilters(); closeAllDropdowns();
+      if(currentMode==='flashcards') load(); else startQuiz();
+    };
+    menu.appendChild(item);
+  });
+}
+
+// ─── Category Dropdown ───
+function buildCatFilters(){
+  const menu = document.getElementById('catDropMenu');
+  if(!menu) return;
+  menu.innerHTML = '';
+
+  const allItem = document.createElement('div');
+  allItem.className = 'dm-item' + (filterCat==='all' ? ' active' : '');
+  allItem.innerHTML = '<span class="dm-dot"></span> সব ক্যাটাগরি';
+  allItem.onclick = () => {
+    filterCat = 'all';
+    document.getElementById('catDropLabel').textContent = 'সব ক্যাটাগরি';
+    buildCatFilters(); closeAllDropdowns();
+    if(currentMode==='flashcards') load(); else startQuiz();
+  };
+  menu.appendChild(allItem);
+
+  const sep = document.createElement('div'); sep.className = 'dm-sep'; menu.appendChild(sep);
+
+  Object.entries(catLabels).forEach(([key, label]) => {
+    const item = document.createElement('div');
+    item.className = 'dm-item' + (key===filterCat ? ' active' : '');
+    item.innerHTML = '<span class="dm-dot"></span> ' + label;
+    item.onclick = () => {
+      filterCat = key;
+      document.getElementById('catDropLabel').textContent = label;
+      buildCatFilters(); closeAllDropdowns();
+      if(currentMode==='flashcards') load(); else startQuiz();
+    };
+    menu.appendChild(item);
+  });
+}
+
+
+// ─── Search + Events ───
+(function() {
+  function initSearch() {
+    var inp = document.getElementById('searchInput');
+    var box = document.getElementById('searchResults');
+    if(!inp || !box) { setTimeout(initSearch, 100); return; }
+
+    function pos() {
+      var r = inp.getBoundingClientRect();
+      box.style.top    = (r.bottom + window.scrollY + 4) + 'px';
+      box.style.left   = (r.left + window.scrollX) + 'px';
+      box.style.width  = r.width + 'px';
+    }
+
+    function search() {
+      var q = inp.value.toLowerCase().trim();
+      if(!q) { box.style.display='none'; return; }
+      var hits = WORDS.filter(function(w){
+        return (w.jp||'').toLowerCase().includes(q)
+            || (w.kana||'').toLowerCase().includes(q)
+            || (w.rom||'').toLowerCase().includes(q)
+            || (w.bn||'').toLowerCase().includes(q);
+      }).slice(0,8);
+      box.innerHTML = '';
+      if(!hits.length) {
+        box.innerHTML = '<div style="padding:12px 16px;color:#6b6d80;">কোনো শব্দ পাওয়া যায়নি।</div>';
+      } else {
+        hits.forEach(function(w) {
+          var d = document.createElement('div');
+          d.style.cssText = 'padding:10px 14px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.05);';
+          d.innerHTML = '<span style="font-family:Noto Sans JP,sans-serif;font-weight:700;font-size:16px;color:var(--current-theme)">'+w.jp+'</span>'
+            + ' <span style="font-family:Space Mono,monospace;font-size:11px;color:#a7a9be;">('+w.rom+')</span>'
+            + '<div style="font-size:12px;color:#fffffe;margin-top:3px;">'+w.bn+' <span style="color:#6b6d80;">· পাঠ '+w.l+'</span></div>';
+          d.onmouseover = function(){ this.style.background='rgba(255,255,255,0.06)'; };
+          d.onmouseout  = function(){ this.style.background=''; };
+          d.onmousedown = function(e) {
+            e.preventDefault();
+            box.style.display = 'none';
+            inp.value = '';
+            filterLesson = w.l;
+            filterCat = 'all';
+            var ll = document.getElementById('lessonDropLabel');
+            var cl = document.getElementById('catDropLabel');
+            if(ll) ll.textContent = 'পাঠ ' + w.l;
+            if(cl) cl.textContent = 'সব ক্যাটাগরি';
+            buildFilters();
+            buildCatFilters();
+            if(currentMode !== 'flashcards') switchMode('flashcards'); else load();
+            var fi = deck.findIndex(function(d){ return d.jp === w.jp; });
+            if(fi !== -1) idx = fi;
+            showCard();
+          };
+          box.appendChild(d);
+        });
+      }
+      pos();
+      box.style.display = 'block';
+    }
+
+    inp.addEventListener('input',  search);
+    inp.addEventListener('keyup',  search);
+    inp.addEventListener('keydown', function(e){ if(e.key==='Escape'){ inp.value=''; box.style.display='none'; } });
+
+    document.addEventListener('click', function(e){
+      if(e.target !== inp) box.style.display = 'none';
+      if(!e.target.closest('.dropdown-wrap')) closeAllDropdowns();
+    });
+    document.addEventListener('keydown', function(e){
+      if(document.activeElement === inp) return;
+      if(currentMode !== 'flashcards') return;
+      if(e.code==='Space'){ e.preventDefault(); toggleFlip(); }
+      if(e.key==='ArrowRight') nextCard();
+      if(e.key==='ArrowLeft')  prevCard();
+      if(e.key.toLowerCase()==='k') markCard(true);
+      if(e.key.toLowerCase()==='a') markCard(false);
     });
   }
-  resultsDiv.style.display = 'block';
-}
 
-// ইউনিক লেসন অটোমেটিক ফিল্টার জেনারেটর
-function buildFilters(){
-  const lf=document.getElementById('lessonFilters');
-  lf.innerHTML='';
-  
-  // WORDS অ্যারে থেকে ইউনিক লেসন খুঁজে বের করে সর্ট (ছোট থেকে বড়) করা হবে
-  const uniqueLessons = [...new Set(WORDS.map(w => w.l))].sort((a,b) => parseInt(a) - parseInt(b));
-  
-  // 'all' বাটন তৈরি
-  const allBtn=document.createElement('button');
-  allBtn.className='filter-btn'+(filterLesson==='all'?' active':'');
-  allBtn.textContent='সব পাঠ';
-  allBtn.onclick=()=>{
-    filterLesson='all';
-    buildFilters();
-    if(currentMode === 'flashcards') load(); else startQuiz();
-  };
-  lf.appendChild(allBtn);
-
-  // ডাইনামিক বাটনগুলো জেনারেট করা হচ্ছে
-  uniqueLessons.forEach(l=>{
-    const b=document.createElement('button');
-    b.className='filter-btn'+(l===filterLesson?' active':'');
-    b.textContent='পাঠ '+l;
-    
-    // কালার থিম সেট করা
-    let themeColor = lessonColors[l] || `hsl(${(parseInt(l)*45)%360}, 85%, 60%)`;
-    b.style.setProperty('--lt-color', themeColor);
-    
-    b.onclick=()=>{
-      filterLesson=l;
-      buildFilters();
-      if(currentMode === 'flashcards') load(); else startQuiz();
-    };
-    lf.appendChild(b);
-  });
-}
-
-function buildCatFilters(){
-  const cf=document.getElementById('catFilters');
-  cf.innerHTML='';
-  const allB=document.createElement('button');
-  allB.className='filter-btn'+(filterCat==='all'?' active':'');
-  allB.textContent='সব ক্যাটাগরি';
-  allB.onclick=()=>{ filterCat='all'; buildCatFilters(); load(); };
-  cf.appendChild(allB);
-  
-  Object.keys(catLabels).forEach(c=>{
-    const b=document.createElement('button');
-    b.className='filter-btn'+(c===filterCat?' active':'');
-    b.textContent=catLabels[c];
-    b.onclick=()=>{ filterCat=c; buildCatFilters(); load(); };
-    cf.appendChild(b);
-  });
-}
-
-document.addEventListener('keydown', (e) => {
-  if(document.activeElement.tagName === 'INPUT') return;
-  if(currentMode !== 'flashcards') return;
-  if(e.code === 'Space') { e.preventDefault(); toggleFlip(); }
-  if(e.key === 'ArrowRight') nextCard();
-  if(e.key === 'ArrowLeft') prevCard();
-  if(e.key.toLowerCase() === 'k') markCard(true);
-  if(e.key.toLowerCase() === 'a') markCard(false);
-});
-
-// Initialization
-buildFilters();
-buildCatFilters();
-load();
+  // Init everything
+  buildFilters();
+  buildCatFilters();
+  load();
+  initSearch();
+})();
 </script>
 </body>
 </html>
