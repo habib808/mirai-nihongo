@@ -657,13 +657,153 @@ const RAW_KANJI_DATABASE = [
     sentences: [{jp: '今度、一緒に飲みに行きませんか？', furi: 'こんど、いっしょにのみにいきませんか？', rom: 'Kondo, issho ni nomi ni ikimasen ka?', bn: 'পরের বার, একসঙ্গে কি ড্রিংকস করতে যাবেন?'} ]
   },
   {
-    kanji: '西', lesson: '13', meaning: 'পশ্চিম', strokes: 6, jlpt: 'N5', radical: '見 (See)',
-    on: 'セイ / サイ (sei / sai)', kun: 'にし (nishi)', components: '西 (পশ্চিম)',
-    story: 'পাখিরা সূর্য ডোবার সময় তাদের চারকোনা আরামদায়ক খাঁচায় বা বাসায় ফিরে যাওয়ার দিক হলো পশ্চিম।',
-    examples: [{word: '西口', furigana: 'にしぐち', romaji: 'nishiguchi', meaning: 'পশ্চিম প্রবেশদ্বার'}, {word: '北西', furigana: 'ほくせい', romaji: 'hokusei', meaning: 'উত্তর-পশ্চিম'}],
-    sentences: [{jp: '太陽は西に沈みます。', furi: 'たいようはにしにしずみます。', rom: 'Taiyō wa nishi ni shizumimasu.', bn: 'সূর্য পশ্চিম দিকে অস্ত যায়।'}]
-  },
-
+  kanji: '東', lesson: '13', meaning: 'পূর্ব / পূর্ব দিক', strokes: 8, jlpt: 'N5', radical: '木 (গাছ)',
+  on: 'トウ (tō)', kun: 'ひがし (higashi)', components: '木 + 日',
+  story: 'গাছের (木) আড়াল থেকে সূর্য (日) উঠছে, অর্থাৎ এটি পূর্ব দিক।',
+  examples: [{word: '東', furigana: 'ひがし', romaji: 'higashi', meaning: 'পূর্ব দিক'}, {word: '東京', furigana: 'とうきょう', romaji: 'tōkyō', meaning: 'টোকিও'}],
+  sentences: [{jp: '太陽は東から昇ります。', furi: 'たいようはひがしからのぼります。', rom: 'Taiyō wa higashi kara noborimasu.', bn: 'সূর্য পূর্ব দিকে উদিত হয়।'}]
+},
+{
+  kanji: '南', lesson: '13', meaning: 'দক্ষিণ / দক্ষিণ দিক', strokes: 9, jlpt: 'N5', radical: '十 (দশ)',
+  on: 'ナン (nan)', kun: 'みなみ (minami)', components: '十 + 冂 + 𡗗',
+  story: 'দক্ষিণের একটি প্রাচীর ঘেরা বাগানে চমৎকার গাছপালা জন্মেছে।',
+  examples: [{word: '南', furigana: 'みなみ', romaji: 'minami', meaning: 'দক্ষিণ দিক'}, {word: '南アメリカ', furigana: 'みなみアメリカ', romaji: 'minami amerika', meaning: 'দক্ষিণ আমেরিকা'}],
+  sentences: [{jp: '私の部屋は南向きです।', furi: 'わたしのへやはみなみむきです。', rom: 'Watashi no heya wa minamimuki desu.', bn: 'আমার ঘরটি দক্ষিণমুখী।'}]
+},
+{
+  kanji: '西', lesson: '13', meaning: 'পশ্চিম / পশ্চিম দিক', strokes: 6, jlpt: 'N5', radical: '⻄ (পশ্চিম)',
+  on: 'セイ (sei) / サイ (sai)', kun: 'にし (nishi)', components: '西',
+  story: 'পাখিরা খাঁচায় বা বাসায় ফিরে যাচ্ছে কারণ পশ্চিমে সূর্য ডুবছে।',
+  examples: [{word: '西', furigana: 'にし', romaji: 'nishi', meaning: 'পশ্চিম দিক'}, {word: '関西', furigana: 'かんさい', romaji: 'kansai', meaning: 'কানসাই অঞ্চল'}],
+  sentences: [{jp: '駅の西口で待ち合わせましょう。', furi: 'えきのにしぐちでまちあわせましょう。', rom: 'Eki no nishiguchi de machiawase mashō.', bn: 'চলুন স্টেশনের পশ্চিম প্রবেশদ্বারে দেখা করি।'}]
+},
+{
+  kanji: '北', lesson: '13', meaning: 'উত্তর / উত্তর দিক', strokes: 5, jlpt: 'N5', radical: 'ヒ (চামচ)',
+  on: 'ホク (hoku)', kun: 'きた (kita)', components: 'สองคนหันหลังชนกัน (দুইজন পিঠাপিঠি দাঁড়িয়ে)',
+  story: 'ঠান্ডা উত্তর মেরুর বাতাসে দুজন মানুষ পিঠাপিঠি দাঁড়িয়ে শীত তাড়ানোর চেষ্টা করছে।',
+  examples: [{word: '北', furigana: 'きた', romaji: 'kita', meaning: 'উত্তর দিক'}, {word: '北海道', furigana: 'ほっかいどう', romaji: 'hokkaidō', meaning: 'হোক্কাইদো'}],
+  sentences: [{jp: '日本の北には北海道があります。', furi: 'にほんのきたにはほっかいどうがあります。', rom: 'Nihon no kita ni wa Hokkaidō ga arimasu.', bn: 'জাপানের উত্তরে হোক্কাইদো অবস্থিত।'}]
+},
+{
+  kanji: '来', lesson: '13', meaning: 'আসা', strokes: 7, jlpt: 'N5', radical: '木 (গাছ)',
+  on: 'ライ (rai)', kun: 'く.る (ku-ru) / き.ます (ki-masu)', components: '木 + 米 এর অংশ',
+  story: 'একটি গাছের দিকে কেউ হেঁটে আসছে ফল পাড়ার জন্য।',
+  examples: [{word: '来ます', furigana: 'きます', romaji: 'kimasu', meaning: 'আসা'}, {word: '来年', furigana: 'らいねん', romaji: 'rainen', meaning: 'আগামী বছর'}],
+  sentences: [{jp: '明日、友達が家に来ます。', furi: 'あした、ともだちがいえにきます。', rom: 'Ashita, tomodachi ga ie ni kimasu.', bn: 'আগামীকাল বন্ধু আমার বাড়িতে আসবে।'}]
+},
+{
+  kanji: '行', lesson: '13', meaning: 'যাওয়া / লাইন', strokes: 6, jlpt: 'N5', radical: '行 (যাওয়া)',
+  on: 'コウ (kō) / ギョウ (gyō)', kun: 'い.く (i-ku) / い.きます (i-masu)', components: '彳 + 亍',
+  story: 'একটি রাস্তার চার রাস্তার মোড়, যেখান দিয়ে মানুষ হেঁটে চলে যাচ্ছে।',
+  examples: [{word: '行きます', furigana: 'いきます', romaji: 'ikimasu', meaning: 'যাওয়া'}, {word: '銀行', furigana: 'ぎんこう', romaji: 'ginkō', meaning: 'ব্যাংক'}],
+  sentences: [{jp: '今から学校に行きます。', furi: 'いまからがっこうにいきます。', rom: 'Ima kara gakkō ni ikimasu.', bn: 'আমি এখন স্কুলে যাচ্ছি।'}]
+},
+{
+  kanji: '乗', lesson: '13', meaning: 'চড়া / আরোহণ করা', strokes: 9, jlpt: 'N4', radical: '丿 (বাঁকা দাগ)',
+  on: 'ジョウ (jō)', kun: 'の.る (no-ru) / の.ります (no-masu)', components: '禾 + 北 (আংশিক)',
+  story: 'একটি গাছের স্তূপ বা কাঠামোর ওপর মানুষ চড়ে বসছে।',
+  examples: [{word: '乗ります', furigana: 'のります', romaji: 'norimasu', meaning: 'চড়া / চড়ে বসা'}, {word: '乗り物', furigana: 'のりもの', romaji: 'norimono', meaning: 'যানবাহন'}],
+  sentences: [{jp: 'ここからバスに乗ります。', furi: 'ここからばすにのります。', rom: 'Koko kara basu ni norimasu.', bn: 'এখান থেকে বাসে চড়ব।'}]
+},
+{
+  kanji: '会', lesson: '13', meaning: 'দেখা করা / সভা', strokes: 6, jlpt: 'N5', radical: '人 (মানুষ)',
+  on: 'カイ (kai)', kun: 'あ.う (a-u)', components: '人 (ছাদ/মানুষ) + 云',
+  story: 'একটি ছাদের নিচে কিছু মানুষ কথা বলার জন্য বা দেখা করার জন্য জড়ো হয়েছে।',
+  examples: [{word: '会社', furigana: 'かいしゃ', romaji: 'kaisha', meaning: 'কোম্পানি / অফিস'}, {word: '会議', furigana: 'かいぎ', romaji: 'kaigi', meaning: 'মিটিং'}],
+  sentences: [{jp: '将来、自分の会社を作りたいです。', furi: 'しょうらい、じぶんのかいしゃをつくりたいです。', rom: 'Shōrai, jibun no kaisha o tsukuritai desu.', bn: 'ভবিষ্যতে আমি নিজের কোম্পানি তৈরি করতে চাই।'}]
+},
+{
+  kanji: '社', lesson: '13', meaning: 'কোম্পানি / মাজার (Shrine)', strokes: 7, jlpt: 'N5', radical: '礻 (ঈশ্বর/ধর্মীয়)',
+  on: 'シャ (sha)', kun: 'やしろ (yashiro)', components: '礻 + 土',
+  story: 'পবিত্র মাটির (土) ওপর দেবতা বা সমাজের কল্যাণে একটি প্রতিষ্ঠান স্থাপন করা।',
+  examples: [{word: '会社', furigana: 'かいしゃ', romaji: 'kaisha', meaning: 'কোম্পানি'}, {word: '神社', furigana: 'じんじゃ', romaji: 'jinja', meaning: 'শিন্তো মাজার'}],
+  sentences: [{jp: 'あの会社はとても大きいです。', furi: 'あのかいしゃはとてもおおきいです。', rom: 'Ano kaisha wa totemo ōkii desu.', bn: 'ওই কোম্পানিটি অনেক বড়।'}]
+},
+  {
+  kanji: '大', lesson: '14', meaning: 'বড়', strokes: 3, jlpt: 'N5', radical: '大 (বড়)',
+  on: 'ダイ (dai)', kun: 'おお.きい (ō-kii)', components: '大',
+  story: 'একজন মানুষ হাত এবং পা দুদিকে মেলে দিয়ে নিজের বড় আকার দেখাচ্ছে।',
+  examples: [{word: '大きい', furigana: 'おおきい', romaji: 'ōkii', meaning: 'বড়'}, {word: '大学', furigana: 'だいがく', romaji: 'daigaku', meaning: 'বিশ্ববিদ্যালয়'}],
+  sentences: [{jp: 'この犬はとても大きいです。', furi: 'このいぬはとてもおおきいです。', rom: 'Kono inu wa totemo ōkii desu.', bn: 'এই কুকুরটি অনেক বড়।'}]
+},
+{
+  kanji: '小', lesson: '14', meaning: 'ছোট', strokes: 3, jlpt: 'N5', radical: '小 (ছোট)',
+  on: 'ショウ (shō)', kun: 'ちい.さい (chii-sai)', components: '小',
+  story: 'একটি বড় বস্তুকে কেটে দুই পাশে ছোট ছোট টুকরো করে রাখা হয়েছে।',
+  examples: [{word: '小さい', furigana: 'ちいさい', romaji: 'chiisai', meaning: 'ছোট'}, {word: '小学校', furigana: 'しょうがっこう', romaji: 'shōgakkō', meaning: 'প্রাইমারি স্কুল'}],
+  sentences: [{jp: '小さいカバンを買いました。', furi: 'ちいさいかばんをかいました。', rom: 'Chiisai kaban o kaimashita.', bn: 'একটি ছোট ব্যাগ কিনেছি।'}]
+},
+{
+  kanji: '高', lesson: '14', meaning: 'উঁচু / দামি', strokes: 10, jlpt: 'N5', radical: '高 (উঁচু)',
+  on: 'コウ (kō)', kun: 'たか.い (taka-i)', components: '高',
+  story: 'একটি উঁচু বহুতল ভবনের ওপর ছাদ ও জানালা দেখা যাচ্ছে।',
+  examples: [{word: '高い', furigana: 'たかい', romaji: 'takai', meaning: 'উঁচু / দামি'}, {word: '高校', furigana: 'こうこう', romaji: 'kōkō', meaning: 'হাই স্কুল'}],
+  sentences: [{jp: 'この時計は高すぎます。', furi: 'このとけいはたかすぎます。', rom: 'Kono tokei wa takasugimasu.', bn: 'এই ঘড়িটির দাম অনেক বেশি।'}]
+},
+{
+  kanji: '低', lesson: '14', meaning: 'নিচু', strokes: 7, jlpt: 'N4', radical: '人 (মানুষ)',
+  on: 'テイ (tei)', kun: 'ひく.い (hiku-i)', components: '亻 + 氏',
+  story: 'একজন মানুষ (亻) তার বংশের বা ভিত্তির নিচু স্তরে অবস্থান করছে।',
+  examples: [{word: '低い', furigana: 'ひくい', romaji: 'hikui', meaning: 'নিচু'}, {word: '低気圧', furigana: 'ていきあつ', romaji: 'teikiatsu', meaning: 'নিম্নচাপ'}],
+  sentences: [{jp: '彼の背は低いです。', furi: 'かれのせはひくいです。', rom: 'Kare no se wa hikui desu.', bn: 'তার উচ্চতা কম (সে খাটো)।'}]
+},
+{
+  kanji: '前', lesson: '14', meaning: 'সামনে / আগে', strokes: 9, jlpt: 'N5', radical: '刀 (তলোয়ার)',
+  on: 'ゼン (zen)', kun: 'まえ (mae)', components: '丷 + 一 + 月 + リ (তলোয়ার)',
+  story: 'তলোয়ার দিয়ে মাংস কাটার আগে বা সামনে টেবিলে সাজিয়ে রাখা হয়েছে।',
+  examples: [{word: '前', furigana: 'まえ', romaji: 'mae', meaning: 'সামনে / আগে'}, {word: '名前', furigana: 'なまえ', romaji: 'namae', meaning: 'নাম'}],
+  sentences: [{jp: '駅の前に大きなビルがあります。', furi: 'えきのまえにおおきなびるがあります。', rom: 'Eki no mae ni ōkina biru ga arimasu.', bn: 'স্টেশনের সামনে একটি বড় বিল্ডিং আছে।'}]
+},
+{
+  kanji: '後', lesson: '14', meaning: 'পেছনে / পরে', strokes: 9, jlpt: 'N5', radical: '彳 (পদচিহ্ন)',
+  on: 'ゴ (go) / コウ (kō)', kun: 'うし.ろ (ushi-ro) / あと (ato)', components: '彳 + 幺 + 夂',
+  story: 'রাস্তায় সুতো ধরে আস্তে আস্তে হেঁটে সবার পেছনে পড়ে থাকা।',
+  examples: [{word: '後ろ', furigana: 'うしろ', romaji: 'ushiro', meaning: 'পেছনে'}, {word: '放課後', furigana: 'ほうかご', romaji: 'hōkago', meaning: 'স্কুলের পর'}],
+  sentences: [{jp: 'あなたの後ろに誰かいます。', furi: 'あなたのうしろにだれかいます。', rom: 'Anata no ushiro ni dareka imasu.', bn: 'আপনার পেছনে কেউ আছে।'}]
+},
+  {
+  kanji: '入', lesson: '15', meaning: 'প্রবেশ করা / ঢুকানো', strokes: 2, jlpt: 'N5', radical: '入 (প্রবেশ)',
+  on: 'ニュウ (nyū)', kun: 'はい.る (hai-ru) / い.れる (i-reru)', components: '入',
+  story: 'কোনো তাঁবু বা ঘরের ভেতরের দিকে চলে যাওয়ার দৃশ্য।',
+  examples: [{word: '入口', furigana: 'いりぐち', romaji: 'iriguchi', meaning: 'প্রবেশদ্বার / এনট্রেন্স'}, {word: '入ります', furigana: 'はいります', romaji: 'hairimasu', meaning: 'প্রবেশ করা'}],
+  sentences: [{jp: 'デパートの入口はどこですか？', furi: 'でぱーとのいりぐちはどこですか？', rom: 'Depāto no iriguchi wa doko desu ka?', bn: 'ডিপার্টমেন্টাল স্টোরের প্রবেশদ্বারটি কোথায়?'}]
+},
+{
+  kanji: '出', lesson: '15', meaning: 'বের হওয়া / বের করা', strokes: 5, jlpt: 'N5', radical: '凵 (পাত্র/বক্স)',
+  on: 'シュツ (shutsu)', kun: 'で.る (de-ru) / だ.す (da-su)', components: '山 + 山 (আংশিক)',
+  story: 'পাহাড়ের ওপর থেকে কোনো কিছু বাইরে বেরিয়ে আসছে।',
+  examples: [{word: '出口', furigana: 'でぐち', romaji: 'deguchi', meaning: 'বহির্গমন / এক্সিট'}, {word: '出ます', furigana: 'でます', romaji: 'demasu', meaning: 'বের হওয়া'}],
+  sentences: [{jp: '出口はあちらにあります。', furi: 'でぐちはあちらにあります。', rom: 'Deguchi wa achira ni arimasu.', bn: 'এক্সিট বা বের হওয়ার রাস্তা ওইদিকে।'}]
+},
+{
+  kanji: '階', lesson: '15', meaning: 'তলা (মেঝে) / সিঁড়ি', strokes: 12, jlpt: 'N4', radical: '⻖ (পাহাড়/টিলা)',
+  on: 'カイ (kai)', kun: 'きざはし (kizahashi)', components: '⻖ + 比 + 白',
+  story: 'পাহাড়ের পাশে সবাই একসাথে (比) সাদা (白) সিঁড়ি বেয়ে ওপরের তলায় উঠছে।',
+  examples: [{word: '三階', furigana: 'さんがい', romaji: 'sangai', meaning: 'তিন তলা'}, {word: '階段', furigana: 'かいだん', romaji: 'kaidan', meaning: 'সিঁড়ি'}],
+  sentences: [{jp: '事務所はビルの五階にあります。', furi: 'じむしょはびるのごかいにあります。', rom: 'Jimusho wa biru no gokai ni arimasu.', bn: 'অফিসটি ভবনের পাঁচ তলায় অবস্থিত।'}]
+},
+{
+  kanji: '押', lesson: '15', meaning: 'ধাক্কা দেওয়া / পুশ করা', strokes: 8, jlpt: 'N4', radical: '扌 (হাত)',
+  on: 'オウ (ō)', kun: 'お.す (o-su)', components: '扌 + 甲',
+  story: 'হাত (扌) দিয়ে কোনো শক্ত খোলস বা বোতামের ওপর চাপ বা ধাক্কা দেওয়া।',
+  examples: [{word: '押す', furigana: 'おす', romaji: 'osu', meaning: 'ধাক্কা দেওয়া'}, {word: '押し入れ', furigana: 'おしいれ', romaji: 'oshiire', meaning: 'জাপানি দেয়াল আলমারি'}],
+  sentences: [{jp: 'このボタンを押してください。', furi: 'このぼたんをおしてください。', rom: 'Kono botan o oshite kudasai.', bn: 'দয়া করে এই বোতামটি চাপুন।'}]
+},
+{
+  kanji: '引', lesson: '15', meaning: 'টানা / পুল করা', strokes: 4, jlpt: 'N4', radical: '弓 (ধনুক)',
+  on: 'イン (in)', kun: 'ひ.く (hi-ku)', components: '弓 + 丨',
+  story: 'ধনুকের (弓) সুতোটিকে সোজা রেখা (丨) বরাবর নিজের দিকে টানা।',
+  examples: [{word: '引く', furigana: 'ひく', romaji: 'hiku', meaning: 'টানা'}, {word: '引き出し', furigana: 'ひきだし', romaji: 'hikidashi', meaning: 'ড্রয়ার'}],
+  sentences: [{jp: 'ドアを押さないで、引いてください。', furi: 'どあをおさないで、ひいてください。', rom: 'Doa o osanaide, hiite kudasai.', bn: 'দরজা ধাক্কা দেবেন না, টানুন।'}]
+},
+{
+  kanji: '安', lesson: '15', meaning: 'সস্তা / নিরাপদ', strokes: 6, jlpt: 'N5', radical: '宀 (ছাদ)',
+  on: 'アン (an)', kun: 'やす.い (yasu-i)', components: '宀 + 女',
+  story: 'একটি ছাদের (宀) নিচে নারী (女) সুরক্ষিত থাকলে মন শান্ত ও সস্তা অনুভব হয়।',
+  examples: [{word: '安い', furigana: 'やすい', romaji: 'yasui', meaning: 'সস্তা'}, {word: '安全', furigana: 'あんぜん', romaji: 'anzen', meaning: 'নিরাপদ'}],
+  sentences: [{jp: 'このスーパーの野菜は安いです。', furi: 'このすーぱーのやさいはやすいです。', rom: 'Kono sūpā no yasai wa yasui desu.', bn: 'এই সুপারের শাকসবজি সস্তা।'}]
+},
+  
   // Numbers Pack (Lesson 16 Focus)
   {
     kanji: '一', lesson: '16', meaning: 'এক', strokes: 1, jlpt: 'N5', radical: '一 (One)',
@@ -735,7 +875,126 @@ const RAW_KANJI_DATABASE = [
     examples: [{word: '十月', furigana: 'じゅうがつ', romaji: 'jūgatsu', meaning: 'অক্টোবর'}, {word: '十分', furigana: 'じゅうぶん', romaji: 'পর্যাপ্ত / যথেষ্ট'}],
     sentences: [{jp: '十日間日本を旅行しました。', furi: 'とおかかんにほんをりょこうしました。', rom: 'Tōkakan nihon o ryokō shimashita.', bn: 'আমি দশ দিন জাপানে ভ্রমণ করেছি।'}]
   },
-
+{
+  kanji: '千', lesson: '17', meaning: 'হাজার', strokes: 3, jlpt: 'N5', radical: '十 (দশ)',
+  on: 'セン (sen)', kun: 'ち (chi)', components: '千',
+  story: 'দশ (十) এর ওপর একটি অতিরিক্ত দাগ দিয়ে হাজার সংখ্যাটি বোঝানো হয়েছে।',
+  examples: [{word: '千円', furigana: 'せんえん', romaji: 'sen\'en', meaning: 'এক হাজার ইয়েন'}, {word: '三千', furigana: 'さんぜん', romaji: 'sanzen', meaning: 'তিন হাজার'}],
+  sentences: [{jp: 'この本は二千円です。', furi: 'このほんはにせんえんです。', rom: 'Kono hon wa nisen\'en desu.', bn: 'এই বইটির দাম দুই হাজার ইয়েন।'}]
+},
+{
+  kanji: '百', lesson: '17', meaning: 'শত / একশত', strokes: 6, jlpt: 'N5', radical: '白 (সাদা)',
+  on: 'ヒャク (hyaku)', kun: 'もも (momo)', components: '一 + 白',
+  story: 'এক (一) এবং সাদা (白) কাঞ্জি মিলে তৈরি হয় একশত।',
+  examples: [{word: '百', furigana: 'ひゃく', romaji: 'hyaku', meaning: 'একশত'}, {word: '三百', furigana: 'さんびゃく', romaji: 'sanbyaku', meaning: 'তিনশত'}],
+  sentences: [{jp: 'リンゴを百個買いました。', furi: 'りんごをひゃっかいました。', rom: 'Ringo o hyakko kaimashita.', bn: 'আমি ১০০টি আপেল কিনেছি।'}]
+},
+{
+  kanji: '万', lesson: '17', meaning: 'দশ হাজার', strokes: 3, jlpt: 'N5', radical: '一 (এক)',
+  on: 'マン (man) / バン (ban)', kun: 'よろず (yorozu)', components: '万',
+  story: 'একটানে অনেক বড় একটি সংখ্যার কোণ তৈরি করা যা দশ হাজার প্রকাশ করে।',
+  examples: [{word: '一万円', furigana: 'いちまんえん', romaji: 'ichiman\'en', meaning: 'দশ হাজার ইয়েন'}, {word: '万国', furigana: 'ばんこく', romaji: 'bankoku', meaning: 'সব দেশ'}],
+  sentences: [{jp: 'この靴は一万円でした。', furi: 'このくつはいちまんえんでした。', rom: 'Kono kutsu wa ichiman\'en deshita.', bn: 'এই জুতোটার দাম ছিল দশ হাজার ইয়েন।'}]
+},
+{
+  kanji: '円', lesson: '17', meaning: 'ইয়েন / গোল', strokes: 4, jlpt: 'N5', radical: '冂 (বক্স)',
+  on: 'エン (en)', kun: 'まる.い (maru-i)', components: '円',
+  story: 'একটি গোল আকৃতির কয়েন বা মুদ্রা যা দিয়ে জাপানি ইয়েন বোঝানো হয়।',
+  examples: [{word: '～円', furigana: '～えん', romaji: '-en', meaning: '...ইয়েন'}, {word: '円高', furigana: 'えんだか', romaji: 'endaka', meaning: 'ইয়েনের মূল্যবৃদ্ধি'}],
+  sentences: [{jp: '全部で五百円です。', furi: 'ぜんぶでごひゃくえんです。', rom: 'Zenbu de gohyaku\'en desu.', bn: 'সব মিলিয়ে পাঁচশত ইয়েন।'}]
+},
+{
+  kanji: '休', lesson: '17', meaning: 'ছুটি / বিশ্রাম', strokes: 6, jlpt: 'N5', radical: '人 (মানুষ)',
+  on: 'キュウ (kyū)', kun: 'やす.む (yasu-mu) / やす.み (yasu-mi)', components: '亻 + 木',
+  story: 'একজন মানুষ (亻) ক্লান্ত হয়ে গাছের (木) পাশে হেলান দিয়ে বিশ্রাম নিচ্ছে।',
+  examples: [{word: '休み', furigana: 'やすみ', romaji: 'yasumi', meaning: 'ছুটি / বিশ্রাম'}, {word: '冬休み', furigana: 'ふゆやすみ', romaji: 'fuyuyasumi', meaning: 'শীতকালীন ছুটি'}],
+  sentences: [{jp: '明日は学校が休みです。', furi: 'あしたはがっこうがやすみです。', rom: 'Ashita wa gakkō ga yasumi desu.', bn: 'আগামীকাল স্কুল ছুটি।'}]
+},
+{
+  kanji: '映', lesson: '17', meaning: 'প্রতিফলন / প্রজেক্ট করা', strokes: 9, jlpt: 'N4', radical: '日 (সূর্য)',
+  on: 'エイ (ei)', kun: 'うつ.る (utsu-ru)', components: '日 + 央',
+  story: 'সূর্যের (日) আলো ঠিক কেন্দ্রের (央) পর্দায় পড়ে ছবি ফুটিয়ে তুলছে।',
+  examples: [{word: '映画', furigana: 'えいが', romaji: 'eiga', meaning: 'সিনেমা / মুভি'}, {word: '上映', furigana: 'じょうえい', romaji: 'jōei', meaning: 'চলচ্চিত্র প্রদর্শন'}],
+  sentences: [{jp: '週末に映画を見に行きます。', furi: 'しゅうまつにえいがをみにいきます。', rom: 'Shūmatsu ni eiga o mi ni ikimasu.', bn: 'উইকএন্ডে আমি সিনেমা দেখতে যাব।'}]
+},
+{
+  kanji: '画', lesson: '17', meaning: 'ছবি / স্ট্রোক', strokes: 8, jlpt: 'N4', radical: '田 (ধানক্ষেত)',
+  on: 'ガ (ga) / カク (kaku)', kun: 'えが.く (ega-ku)', components: '一 + 由 + 凵',
+  story: 'ধানক্ষেতের চারপাশের সীমানা বা ক্যানভাসে সুন্দর করে ছবি আঁকা।',
+  examples: [{word: '映画', furigana: 'えいが', romaji: 'eiga', meaning: 'মুভি'}, {word: '画筆', furigana: 'がひつ', romaji: 'gahitsu', meaning: 'আঁকার ব্রাশ'}],
+  sentences: [{jp: '日本のアニメの画はきれいです。', furi: 'にほんのあにめのがはきれいです。', rom: 'Nihon no anime no ga wa kirei desu.', bn: 'জাপানি অ্যানিমের ছবি বা ড্রয়িংগুলো সুন্দর।'}]
+},
+{
+  kanji: '語', lesson: '17', meaning: 'ভাষা / কথা', strokes: 14, jlpt: 'N5', radical: '言 (কথা)',
+  on: 'ゴ (go)', kun: 'かた.る (kata-ru)', components: '言 + 五 + 口',
+  story: 'পাঁচটি (五) মুখ (口) দিয়ে কথা (言) বলা, অর্থাৎ ভাষা তৈরি হওয়া।',
+  examples: [{word: '日本語', furigana: 'にほんご', romaji: 'nihongo', meaning: 'জাপানি ভাষা'}, {word: '英語', furigana: 'えいご', romaji: 'eigo', meaning: 'ইংরেজি ভাষা'}],
+  sentences: [{jp: '日本語の勉強はとても面白いです。', furi: 'にほんごのべんきょうはとてもおもしろいです。', rom: 'Nihongo no benkyō wa totemo omoshiroi desu.', bn: 'জাপানি ভাষা শেখা অনেক মজাদার।'}]
+},
+{
+  kanji: '勉', lesson: '17', meaning: 'চেষ্টা করা / কঠোর পরিশ্রম', strokes: 10, jlpt: 'N4', radical: '力 (শক্তি)',
+  on: 'ベン (ben)', kun: 'つと.める (tsuto-meru)', components: '免 + 力',
+  story: 'পরীক্ষায় পাস করার জন্য নিজের সব শক্তি (力) দিয়ে কঠোর চেষ্টা করা।',
+  examples: [{word: '勉強します', furigana: 'べんきょうします', romaji: 'benkyō shimasu', meaning: 'পড়াশোনা করা'}, {word: 'ガリ勉', furigana: 'がりべん', romaji: 'gariben', meaning: 'কেতাবী কিড়া (অতিরিক্ত পড়ুয়া)'}],
+  sentences: [{jp: '毎日、三時間勉強します।', furi: 'まいにち、さんじかんべんきょうします。', rom: 'Mainichi, sanjikan benkyō shimasu.', bn: 'আমি প্রতিদিন তিন ঘণ্টা পড়াশোনা করি।'}]
+},
+{
+  kanji: '強', lesson: '17', meaning: 'শক্তিশালী / জোর করা', strokes: 11, jlpt: 'N4', radical: '弓 (ধনুক)',
+  on: 'キョウ (kyō)', kun: 'つよ.い (tsuyo-i)', components: '弓 + 厶 + 虫',
+  story: 'একটি ধনুক (弓) এবং একটি পোকা (虫) যা আকারে ছোট হলেও অনেক শক্তিশালী।',
+  examples: [{word: '勉強', furigana: 'べんきょう', romaji: 'benkyō', meaning: 'পড়াশোনা'}, {word: '強い', furigana: 'つよい', romaji: 'tsuyoi', meaning: 'শক্তিশালী'}],
+  sentences: [{jp: '風が強くなってきました。', furi: 'かぜがつよくなってきました。', rom: 'Kaze ga tsuyoku natte kimashita.', bn: 'বাতাস শক্তিশালী (প্রবল) হয়ে উঠেছে।'}]
+},
+{
+  kanji: '買', lesson: '17', meaning: 'কেনা / ক্রয় করা', strokes: 12, jlpt: 'N5', radical: '貝 (ঝিনুক/টাকা)',
+  on: 'バイ (bai)', kun: 'か.う (ka-u)', components: '罒 (জাল/চোখ) + 貝',
+  story: 'প্রাচীনকালে ঝিনুক (貝) দিয়ে কেনাকাটা করা হতো, চোখ দিয়ে দেখে জিনিস কেনা।',
+  examples: [{word: '買います', furigana: 'かいます', romaji: 'kaimasu', meaning: 'কেনা'}, {word: '買い物', furigana: 'かいもの', romaji: 'kaimono', meaning: 'কেনাকাটা / শপিং'}],
+  sentences: [{jp: '新しいパソコンを買いたいです。', furi: 'あたらしいぱそこんをかいたいです。', rom: 'Atarashii pasokon o kaitai desu.', bn: 'আমি একটি নতুন পার্সোনাল কম্পিউটার কিনতে চাই।'}]
+},
+  {
+  kanji: '温', lesson: '18', meaning: 'উষ্ণ / গরম', strokes: 12, jlpt: 'N4', radical: '氵 (পানি)',
+  on: 'オン (on)', kun: 'あたた.かい (atata-kai)', components: '氵 + 日 + 皿',
+  story: 'সূর্যের (日) নিচে একটি পাত্রে (皿) থাকা পানি (氵) উষ্ণ বা গরম হয়ে উঠছে।',
+  examples: [{word: '温泉', furigana: 'おんせん', romaji: 'onsen', meaning: 'গরম পানির ঝরনা / অনসেন'}, {word: '気温', furigana: 'きおん', romaji: 'kion', meaning: 'তাপমাত্রা'}],
+  sentences: [{jp: '日本の温泉に入ったことがありますか？', furi: 'にほんのおんせんにはいったことがありますか？', rom: 'Nihon no onsen ni haitta koto ga arimasu ka?', bn: 'আপনি কি কখনো জাপানের অনসেনে (গরম ঝরনা) নেমেছেন?'}]
+},
+{
+  kanji: '泉', lesson: '18', meaning: 'ঝরনা / বসন্ত', strokes: 9, jlpt: 'N4', radical: '水 (পানি)',
+  on: 'セン (sen)', kun: 'いずみ (izumi)', components: '白 + 水',
+  story: 'পাহাড় থেকে পরিষ্কার সাদা (白) পানি (水) ঝরনা হয়ে বয়ে চলেছে।',
+  examples: [{word: '温泉', furigana: 'おんせん', romaji: 'onsen', meaning: 'হট স্প্রিং'}, {word: '泉', furigana: 'いずみ', romaji: 'izumi', meaning: 'ঝরনা'}],
+  sentences: [{jp: '森の中に小さな泉があります。', furi: 'もりの中に小さな泉があります。', rom: 'Mori no naka ni chiisana izumi ga arimasu.', bn: 'বনের ভেতরে একটি ছোট ঝরনা আছে।'}]
+},
+{
+  kanji: '予', lesson: '18', meaning: 'আগে থেকে / অগ্রিম', strokes: 4, jlpt: 'N4', radical: '亅 (হুক)',
+  on: 'ヨ (yo)', kun: 'あらかじ.め (arakaji-me)', components: '予',
+  story: 'কোনো কাজ শুরু করার আগে থেকে হুক দিয়ে প্ল্যান গুছিয়ে রাখা।',
+  examples: [{word: '予定', furigana: 'よてい', romaji: 'yotei', meaning: 'পরিকল্পনা / শিডিউল'}, {word: '予約', furigana: 'よやく', romaji: 'yoyaku', meaning: 'বুকিং / রিজার্ভেশন'}],
+  sentences: [{jp: '明日の予定を教えてください。', furi: 'あしたのよていをおしえてください。', rom: 'Ashita no yotei o oshiete kudasai.', bn: 'দয়া করে আগামীকালের প্ল্যান বা শিডিউল আমাকে জানান।'}]
+},
+{
+  kanji: '定', lesson: '18', meaning: 'নির্ধারণ করা / ঠিক করা', strokes: 8, jlpt: 'N4', radical: '宀 (ছাদ)',
+  on: 'テイ (tei)', kun: 'さだ.める (sada-meru)', components: '宀 + 疋',
+  story: 'একটি ছাদের (宀) নিচে সবাই মিলে চূড়ান্ত সিদ্ধান্ত বা নিয়ম ঠিক করল।',
+  examples: [{word: '予定', furigana: 'よてい', romaji: 'yotei', meaning: 'প্ল্যান'}, {word: '定食', furigana: 'ていしょく', romaji: 'teishoku', meaning: 'সেট মেনু (খাবার)'}],
+  sentences: [{jp: '旅行の予定はまだ決まっていません。', furi: 'りょこうのよていはまだきまっていません。', rom: 'Ryokō no yotei wa mada kimatte imasen.', bn: 'ভ্রমণের পরিকল্পনা এখনো চূড়ান্ত হয়নি।'}]
+},
+{
+  kanji: '週', lesson: '18', meaning: 'সপ্তাহ', strokes: 11, jlpt: 'N5', radical: '⻌ (রাস্তা/চলা)',
+  on: 'シュウ (shū)', kun: '週', components: '⻌ + 周',
+  story: 'চারপাশের (周) সীমানা বা রাস্তা দিয়ে ঘুরে আসতে পুরো এক সপ্তাহ সময় লাগে।',
+  examples: [{word: '来週', furigana: 'らいしゅう', romaji: 'raishū', meaning: 'আগামী সপ্তাহ'}, {word: '今週', furigana: 'こんしゅう', romaji: 'konshū', meaning: 'এই সপ্তাহ'}],
+  sentences: [{jp: '来週、京都へ旅行します。', furi: 'らいしゅう、きょうとへりょこうします。', rom: 'Raishū, Kyōto e ryokō shimasu.', bn: 'আগামী সপ্তাহে কিয়োটোতে ঘুরতে যাব।'}]
+},
+{
+  kanji: '旅', lesson: '18', meaning: 'ভ্রমণ / ট্রাভেল', strokes: 10, jlpt: 'N4', radical: '方 (দিক)',
+  on: 'リョ (ryo)', kun: 'たび (tabi)', components: '方 + 氏 + ア',
+  story: 'একটি নির্দিষ্ট দিকে (方) পতাকা নিয়ে একদল মানুষ একসাথে ভ্রমণে বের হয়েছে।',
+  examples: [{word: '旅行します', furigana: 'りょこうします', romaji: 'ryokō shimasu', meaning: 'ভ্রমণ করা'}, {word: '一人旅', furigana: 'ひとりたび', romaji: 'hitoritabi', meaning: 'একা একা ভ্রমণ'}],
+  sentences: [{jp: '日本を旅行するのが夢です。', furi: 'にほんをりょこうするのがゆめです。', rom: 'Nihon o ryokō suru no ga yume desu.', bn: 'জাপান ভ্রমণ করা আমার একটা স্বপ্ন।'}]
+},
+  
   // Intermediate Stage - N4/N5 Practical Mix (Lessons 1-18 Continual)
   {
     kanji: '学', lesson: '1', meaning: 'শিক্ষা / ছাত্র / অধ্যায়ন', strokes: 8, jlpt: 'N5', radical: '子 (Child)',
