@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#0f766e">
+    <meta
+      name="description"
+      content="Offline Irodori Japanese vocabulary PWA with lessons, flashcards, quizzes, writing practice, and progress tracking."
+    >
+    <title>Irodori Vocabulary Studio</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="icons/icon-192.png">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar" aria-label="Application header">
+        <a class="brand" href="#top" aria-label="Irodori Vocabulary Studio home">
+          <span class="brand-mark" aria-hidden="true">い</span>
+          <span>
+            <strong>Irodori Vocabulary Studio</strong>
+            <small>初級1 - JLPT N5 focus</small>
+          </span>
+        </a>
+
+        <label class="search-wrap" for="searchInput">
+          <span aria-hidden="true">⌕</span>
+          <input id="searchInput" type="search" autocomplete="off" aria-label="Search Japanese, kana, romaji, Bangla, English">
+        </label>
+
+        <div class="top-actions" aria-label="Quick controls">
+          <button class="icon-button" id="favoriteOnlyButton" type="button" aria-pressed="false" title="Show favorites only">★</button>
+          <button class="icon-button" id="themeToggle" type="button" title="Toggle dark mode">◐</button>
+          <button class="icon-button" id="installButton" type="button" hidden title="Install app">⇩</button>
+        </div>
+      </header>
+
+      <section class="dashboard" id="top" aria-label="Learning dashboard">
+        <div class="dashboard-copy">
+          <p class="eyebrow">Irodori vocabulary from the uploaded PDF</p>
+          <h1>Study, review, quiz, and print every lesson offline.</h1>
+        </div>
+        <div class="stats-grid" id="statsGrid" aria-live="polite"></div>
+        <div class="goal-panel">
+          <div>
+            <span class="panel-label">Today's Goal</span>
+            <strong id="todayGoalText">0 / 20 learned</strong>
+          </div>
+          <div class="progress-track" aria-hidden="true">
+            <span id="goalProgressBar"></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="quick-grid" aria-label="Quick access">
+        <button class="quick-card" type="button" data-tab="cards">
+          <span>Vocabulary</span>
+          <strong id="quickTotal">0 words</strong>
+        </button>
+        <button class="quick-card" type="button" data-tab="flashcards">
+          <span>Flashcards</span>
+          <strong>Flip practice</strong>
+        </button>
+        <button class="quick-card" type="button" data-tab="quiz">
+          <span>Quiz Mode</span>
+          <strong id="quickBestScore">No score yet</strong>
+        </button>
+        <button class="quick-card" type="button" data-tab="writing">
+          <span>Writing</span>
+          <strong>Canvas drill</strong>
+        </button>
+      </section>
+
+      <main class="main-layout">
+        <aside class="lesson-sidebar" aria-label="Lesson filter">
+          <div class="sidebar-head">
+            <h2>Lessons</h2>
+            <button class="text-button" id="clearLessonButton" type="button">All</button>
+          </div>
+          <div id="lessonList" class="lesson-list"></div>
+        </aside>
+
+        <section class="workspace" aria-label="Vocabulary workspace">
+          <nav class="mode-tabs" aria-label="Study modes">
+            <button class="tab-button active" type="button" data-tab="cards">Cards</button>
+            <button class="tab-button" type="button" data-tab="flashcards">Flashcards</button>
+            <button class="tab-button" type="button" data-tab="quiz">Quiz</button>
+            <button class="tab-button" type="button" data-tab="writing">Writing</button>
+            <button class="tab-button" type="button" data-tab="settings">Settings</button>
+          </nav>
+
+          <section class="filters" aria-label="Vocabulary filters">
+            <label>
+              Lesson
+              <select id="lessonFilter"></select>
+            </label>
+            <label>
+              Word Type
+              <select id="typeFilter"></select>
+            </label>
+            <label>
+              JLPT
+              <select id="jlptFilter">
+                <option value="all">All levels</option>
+                <option value="N5">N5</option>
+                <option value="N4">N4</option>
+              </select>
+            </label>
+            <label>
+              Status
+              <select id="statusFilter">
+                <option value="all">All words</option>
+                <option value="learned">Learned</option>
+                <option value="unlearned">Unlearned</option>
+                <option value="review">Review</option>
+                <option value="favorite">Favorites</option>
+              </select>
+            </label>
+            <button class="primary-button" id="exportButton" type="button">Export PDF</button>
+            <button class="ghost-button" id="printButton" type="button">Print</button>
+          </section>
+
+          <section class="view active" id="cardsView" aria-labelledby="cardsHeading">
+            <div class="view-head">
+              <div>
+                <p class="panel-label">Vocabulary Cards</p>
+                <h2 id="cardsHeading">All words</h2>
+              </div>
+              <span id="resultCount" class="result-count">0 results</span>
+            </div>
+            <div class="cards-grid" id="cardsGrid"></div>
+            <button class="load-more" id="loadMoreButton" type="button" hidden>Load more</button>
+          </section>
+
+          <section class="view" id="flashcardsView" aria-labelledby="flashcardsHeading">
+            <div class="view-head">
+              <div>
+                <p class="panel-label">Flashcard Mode</p>
+                <h2 id="flashcardsHeading">Flip and review</h2>
+              </div>
+              <span id="flashcardCounter" class="result-count">0 / 0</span>
+            </div>
+            <article class="flashcard" id="flashcard" tabindex="0" aria-live="polite">
+              <div class="flashcard-face" id="flashcardFront"></div>
+              <div class="flashcard-face back" id="flashcardBack" hidden></div>
+            </article>
+            <div class="action-row">
+              <button class="ghost-button" id="prevFlashcard" type="button">Prev</button>
+              <button class="primary-button" id="flipFlashcard" type="button">Reveal</button>
+              <button class="ghost-button" id="nextFlashcard" type="button">Next</button>
+              <button class="ghost-button" id="shuffleFlashcards" type="button">Shuffle</button>
+            </div>
+          </section>
+
+          <section class="view" id="quizView" aria-labelledby="quizHeading">
+            <div class="view-head">
+              <div>
+                <p class="panel-label">Quiz Mode</p>
+                <h2 id="quizHeading">Multiple choice, typing, meaning, Japanese, random, lesson quiz</h2>
+              </div>
+              <span id="quizTimer" class="result-count">00:00</span>
+            </div>
+            <div class="quiz-setup">
+              <label>
+                Mode
+                <select id="quizMode">
+                  <option value="multiple">Multiple Choice</option>
+                  <option value="typing">Typing Quiz</option>
+                  <option value="meaning">Meaning Quiz</option>
+                  <option value="japanese">Japanese Quiz</option>
+                  <option value="random">Random Quiz</option>
+                  <option value="lesson">Lesson Quiz</option>
+                </select>
+              </label>
+              <label>
+                Questions
+                <input id="quizLength" type="number" min="5" max="50" step="5" value="10">
+              </label>
+              <button class="primary-button" id="startQuiz" type="button">Start Quiz</button>
+            </div>
+            <div class="quiz-card" id="quizCard" aria-live="polite"></div>
+          </section>
+
+          <section class="view" id="writingView" aria-labelledby="writingHeading">
+            <div class="view-head">
+              <div>
+                <p class="panel-label">Writing Mode</p>
+                <h2 id="writingHeading">Read, write, reveal</h2>
+              </div>
+              <span id="writingCounter" class="result-count">0 / 0</span>
+            </div>
+            <div class="writing-grid">
+              <article class="writing-card">
+                <span class="panel-label">Prompt</span>
+                <div id="writingPrompt" class="writing-prompt"></div>
+                <div id="writingAnswer" class="writing-answer" hidden></div>
+                <div class="action-row">
+                  <button class="primary-button" id="revealWriting" type="button">Reveal</button>
+                  <button class="ghost-button" id="nextWriting" type="button">Next</button>
+                </div>
+              </article>
+              <article class="practice-board">
+                <span class="panel-label">Practice Grid</span>
+                <canvas id="writingCanvas" width="720" height="480" aria-label="Writing practice canvas"></canvas>
+                <div class="action-row">
+                  <button class="ghost-button" id="clearCanvas" type="button">Clear</button>
+                </div>
+              </article>
+            </div>
+          </section>
+
+          <section class="view" id="settingsView" aria-labelledby="settingsHeading">
+            <div class="view-head">
+              <div>
+                <p class="panel-label">Settings</p>
+                <h2 id="settingsHeading">Display and learning preferences</h2>
+              </div>
+            </div>
+            <div class="settings-grid" id="settingsGrid">
+              <label><input type="checkbox" data-setting="showFurigana"> Show Furigana</label>
+              <label><input type="checkbox" data-setting="showRomaji"> Show Romaji</label>
+              <label><input type="checkbox" data-setting="showEnglish"> Show English</label>
+              <label><input type="checkbox" data-setting="showBangla"> Show Bangla</label>
+              <label><input type="checkbox" data-setting="largeFont"> Large Japanese Font</label>
+              <label><input type="checkbox" data-setting="compactCards"> Compact Cards</label>
+              <label><input type="checkbox" data-setting="darkMode"> Dark Mode</label>
+              <label class="goal-input">Daily Goal <input id="dailyGoalInput" type="number" min="1" max="200" value="20"></label>
+            </div>
+            <div class="danger-zone">
+              <button class="ghost-button" id="resetFilters" type="button">Reset Filters</button>
+              <button class="ghost-button" id="resetProgress" type="button">Reset Progress</button>
+            </div>
+          </section>
+        </section>
+      </main>
+    </div>
+
+    <section id="printArea" class="print-area" aria-hidden="true"></section>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <script src="assets/words-data.js"></script>
+    <script src="assets/html2pdf.bundle.min.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
