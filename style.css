@@ -152,7 +152,7 @@ select:disabled {
 }
 
 .search-wrap input {
-  width: 100%;
+  width: 80%;
   min-width: 0;
   border: 0;
   outline: 0;
