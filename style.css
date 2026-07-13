@@ -362,6 +362,15 @@ select:disabled {
   overflow: auto;
   padding: 16px;
 }
+@media (max-width: 720px) {
+  .lesson-sidebar {
+    display: none;
+  }
+
+  .main-layout {
+    grid-template-columns: 1fr;
+  }
+}
 
 .sidebar-head,
 .view-head {
