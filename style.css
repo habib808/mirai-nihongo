@@ -371,6 +371,15 @@ select:disabled {
     grid-template-columns: 1fr !important;
   }
 }
+@media (max-width: 720px) {
+  .quick-grid {
+    display: none !important;
+  }
+
+  .main-layout {
+    grid-template-columns: 1fr !important;
+  }
+}
 
 .sidebar-head,
 .view-head {
