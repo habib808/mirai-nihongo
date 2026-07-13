@@ -931,7 +931,7 @@ canvas {
     display: none !important;
   }
 
-  .mode-tabs {
+  .mode-tabs-select {
     display: flex !important;
     flex-wrap: nowrap;
     overflow-x: auto;
