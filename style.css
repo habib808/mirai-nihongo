@@ -986,6 +986,11 @@ canvas {
     animation-duration: 0.01ms !important;
   }
 }
+@media (max-width: 720px) {
+    .mode-tabs .tab-button {
+        padding-top: 7px !importan;
+    }
+}
 
 @media print {
   @page {
