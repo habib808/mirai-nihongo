@@ -927,7 +927,7 @@ canvas {
   }
 @media (max-width: 720px) {
   /* dropdown বাতিল, বাটন রো-ই দেখাবে */
-  .mode-tabs-select {
+  .mode-tabs {
     display: none !important;
   }
 
