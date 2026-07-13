@@ -456,6 +456,14 @@ select:disabled {
   background: var(--surface);
 }
 
+.mode-tabs-select {
+  display: none !important;
+}
+
+.mode-tabs .tab-button {
+  width: auto !important;
+}
+
 .tab-button.active {
   background: color-mix(in srgb, var(--primary), transparent 88%);
   color: var(--primary);
@@ -926,12 +934,7 @@ canvas {
     width: 100%;
   }
 @media (max-width: 720px) {
-  /* dropdown বাতিল, বাটন রো-ই দেখাবে */
   .mode-tabs {
-    display: none !important;
-  }
-
-  .mode-tabs-select {
     display: flex !important;
     flex-wrap: nowrap;
     overflow-x: auto;
@@ -948,6 +951,7 @@ canvas {
   .mode-tabs .tab-button {
     display: inline-flex !important;
     flex: 0 0 auto;
+    width: auto !important;
     white-space: nowrap;
   }
 }
