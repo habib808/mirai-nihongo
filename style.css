@@ -919,21 +919,17 @@ canvas {
     grid-template-columns: 1fr;
   }
 
-}
-
-  .filters,
-  .mode-tabs {
+  .filters {
     align-items: stretch;
   }
 
   .filters label,
   .filters button,
-  .mode-tabs button,
   select,
   input[type="number"] {
     width: 100%;
   }
-@media (max-width: 720px) {
+
   .mode-tabs {
     display: flex !important;
     flex-wrap: nowrap;
@@ -954,7 +950,6 @@ canvas {
     width: auto !important;
     white-space: nowrap;
   }
-}
 
   .view-head {
     align-items: start;
