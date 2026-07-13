@@ -366,6 +366,9 @@ select:disabled {
   .lesson-sidebar {
     display: none !important;
   }
+    .quick-grid {
+    display: none !important;
+  }
 
   .main-layout {
     grid-template-columns: 1fr !important;
@@ -906,10 +909,6 @@ canvas {
   .quick-grid,
   .writing-grid {
     grid-template-columns: 1fr;
-  }
-  @media (max-width: 720px) {
-  .quick-grid {
-    display: none !important;
   }
 
 }
