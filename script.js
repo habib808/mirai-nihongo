@@ -38,7 +38,7 @@ const defaultSettings = {
   showBangla: true,
   largeFont: false,
   compactCards: false,
-  darkMode: false,
+  darkMode: true,
   dailyGoal: 20,
 };
 
