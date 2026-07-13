@@ -896,6 +896,18 @@ canvas {
     width: min(100% - 20px, 1480px);
     margin-bottom: 32px;
   }
+  .filters {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 12px !important;
+  }
+
+  .filters label,
+  .filters button,
+  select,
+  input[type="number"] {
+    width: 100% !important;
+  }
 
   .brand small {
     display: none;
@@ -919,7 +931,9 @@ canvas {
     grid-template-columns: 1fr;
   }
 
-
+  .filters {
+    align-items: stretch;
+  }
 
   .filters label,
   .filters button,
