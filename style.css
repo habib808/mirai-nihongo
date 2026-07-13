@@ -244,6 +244,7 @@ select:disabled {
     var(--primary);
   color: #fff;
   box-shadow: var(--shadow);
+  display: none;
 }
 
 .dashboard h1 {
