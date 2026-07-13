@@ -175,7 +175,6 @@ select:disabled {
 .text-button,
 .tab-button,
 .load-more {
-  min-height: 42px;
   border-radius: var(--radius);
   border: 1px solid transparent;
   transition: transform 160ms ease, background 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
@@ -212,6 +211,7 @@ select:disabled {
   background: var(--surface);
   color: var(--text);
   border-color: var(--line);
+  
 }
 
 .text-button {
