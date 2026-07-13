@@ -925,6 +925,32 @@ canvas {
   input[type="number"] {
     width: 100%;
   }
+@media (max-width: 720px) {
+  /* dropdown বাতিল, বাটন রো-ই দেখাবে */
+  .mode-tabs-select {
+    display: none !important;
+  }
+
+  .mode-tabs {
+    display: flex !important;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 8px;
+    padding-bottom: 12px;
+  }
+
+  .mode-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .mode-tabs .tab-button {
+    display: inline-flex !important;
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+}
 
   .view-head {
     align-items: start;
