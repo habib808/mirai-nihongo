@@ -364,11 +364,11 @@ select:disabled {
 }
 @media (max-width: 720px) {
   .lesson-sidebar {
-    display: none;
+    display: none !important;
   }
 
   .main-layout {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr !important;
   }
 }
 
