@@ -919,9 +919,7 @@ canvas {
     grid-template-columns: 1fr;
   }
 
-  .filters {
-    align-items: stretch;
-  }
+
 
   .filters label,
   .filters button,
